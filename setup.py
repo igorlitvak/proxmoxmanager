@@ -1,5 +1,8 @@
 from setuptools import setup, find_packages
 
+with open("requirements.txt") as f:
+    REQUIREMENTS = f.read().splitlines()
+
 setup(
     # Project name (e. g. pip install proxmoxmanager)
     name="proxmoxmanager",
@@ -26,5 +29,5 @@ setup(
     python_requires=">=3.8, <4",  # TODO: test on earlier versions
 
     # Which external projects this project depends on
-    install_requires=["proxmoxer"],
+    install_requires=REQUIREMENTS,
 )

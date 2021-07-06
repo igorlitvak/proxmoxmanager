@@ -1,5 +1,4 @@
 from proxmoxer import ProxmoxAPI
-from .utils import return_default_on_exception
 
 
 class ProxmoxManager:
