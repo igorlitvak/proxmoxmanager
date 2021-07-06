@@ -1,4 +1,6 @@
 from proxmoxmanager import ProxmoxManager
+# from proxmoxer import ResourceException
+# from proxmoxmanager.utils import reraise_exception_on_exception
 import unittest
 
 
@@ -15,6 +17,7 @@ class FooAPIWrapper:
         return [{"userid": "1", "username": "user1"}, {"userid": "2", "username": "user2"}]
 
     @staticmethod
+    # @reraise_exception_on_exception(ResourceException)
     def get_user(userid: str):
         users = [{"userid": "1", "username": "user1"}, {"userid": "2", "username": "user2"}]
         return list(filter(lambda u: u["userid"] == userid, users))[0]

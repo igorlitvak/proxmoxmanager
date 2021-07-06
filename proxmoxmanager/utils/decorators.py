@@ -1,7 +1,8 @@
-from typing import Sequence
+from typing import Any, Union, Sequence
 
 
-def return_default_on_exception(default_value=None, catch_errors: Sequence[Exception] = (Exception,)):
+def return_default_on_exception(default_value: Any = None,
+                                catch_errors: Union[Exception, Sequence[Exception]] = (Exception,)):
     """
     Custom decorator that catches exceptions from function and returns some default value
     :param default_value: Any value to return if exception was caught (None by default)
@@ -21,7 +22,8 @@ def return_default_on_exception(default_value=None, catch_errors: Sequence[Excep
     return decorator
 
 
-def reraise_exception_on_exception(new_error: Exception, catch_errors: Sequence[Exception] = (Exception,)):
+def reraise_exception_on_exception(new_error: Exception,
+                                   catch_errors: Union[Exception, Sequence[Exception]] = (Exception,)):
     """
     Custom decorator that catches exceptions from function and reraises other exception
     :param new_error: Which exception must be raised
