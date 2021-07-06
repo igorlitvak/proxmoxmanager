@@ -32,7 +32,7 @@ class TestProxmoxManager(unittest.TestCase):
 
     def test_get_users(self):
         p = FooProxmoxManager("foo", "bar", "bat", "baz")
-        self.assertEqual(p.get_users(), FooAPIWrapper.get_users(), "Raw data should not be modified")
+        self.assertEqual(p.get_users(), FooAPIWrapper.get_users(), "Method is supposed to return raw data")
 
 
 if __name__ == '__main__':
