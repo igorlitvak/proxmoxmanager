@@ -1,4 +1,4 @@
-from typing import Any, Sequence
+from typing import Sequence
 
 
 def return_default_on_exception(default_value=None, catch_errors: Sequence[Exception] = (Exception,)):
