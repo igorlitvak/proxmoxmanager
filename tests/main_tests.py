@@ -22,7 +22,7 @@ class FooAPIWrapper:
 
 class FooProxmoxManager(ProxmoxManager):
     """
-    PromoxmoxManager class that is modified to user PlaceholderAPIWrapper
+    PromoxmoxManager class that is modified to use PlaceholderAPIWrapper
     """
 
     def __init__(self, host: str, user: str, token_name: str, token_value: str):
