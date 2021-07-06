@@ -1,4 +1,5 @@
 from proxmoxer import ProxmoxAPI
+from .utils import return_default_on_exception
 
 
 class ProxmoxManager:
@@ -16,6 +17,15 @@ class ProxmoxManager:
         """
         return self._api.get_users()
 
+    @return_default_on_exception(default_value=None)  # TODO: decorator may be unneeded
+    def get_user(self, userid: str):
+        """
+        Get specific user by id
+        :param userid
+        :return: User in JSON-like format
+        """
+        return self._api.get_user(userid)
+
 
 class APIWrapper:
     """
@@ -27,3 +37,6 @@ class APIWrapper:
 
     def get_users(self):
         return self._proxmoxer.access.users.get()
+
+    def get_user(self, userid: str):
+        return self._proxmoxer.access.users[userid].get()
