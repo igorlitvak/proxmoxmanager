@@ -32,7 +32,7 @@ def return_default_on_exception(default_value: Any = None,
 
 def reraise_exception_on_exception(new_error: Exception,
                                    catch_errors: Union[Exception, Sequence[Exception]] = Exception,
-                                   with_args: Tuple = None,
+                                   with_args: Sequence = None,
                                    with_fields: Dict[str, Any] = None):
     """
     Custom decorator that catches exceptions from function and reraises other exception
