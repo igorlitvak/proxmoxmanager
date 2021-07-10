@@ -38,37 +38,37 @@ class TestDecorators(unittest.TestCase):
         def none_on_exception():
             raise Exception
 
-        self.assertIsNone(none_on_exception(), "Should return default value None")
+        self.assertIsNone(none_on_exception())
 
         @return_default_on_exception(default_value="foo")
         def str_on_exception():
             raise Exception
 
-        self.assertEqual(str_on_exception(), "foo", "Should return default value 'foo'")
+        self.assertEqual(str_on_exception(), "foo")
 
         @return_default_on_exception(default_value=123)
         def int_on_exception():
             raise Exception
 
-        self.assertEqual(int_on_exception(), 123, "Should return default value 'foo'")
+        self.assertEqual(int_on_exception(), 123)
 
         @return_default_on_exception()
         def catch_any_exception():
             raise ExceptionA
 
-        self.assertIsNone(catch_any_exception(), "Should return default value None")
+        self.assertIsNone(catch_any_exception())
 
         @return_default_on_exception(catch_errors=ExceptionA)
         def catch_specific_exception():
             raise ExceptionA
 
-        self.assertIsNone(catch_specific_exception(), "Should return default value None")
+        self.assertIsNone(catch_specific_exception())
 
         @return_default_on_exception(catch_errors=(ExceptionA, ExceptionB))
         def catch_list_of_exceptions():
             raise ExceptionA
 
-        self.assertIsNone(catch_list_of_exceptions(), "Should return default value None")
+        self.assertIsNone(catch_list_of_exceptions())
 
         @return_default_on_exception(catch_errors=())
         def catch_no_exceptions():
@@ -86,19 +86,43 @@ class TestDecorators(unittest.TestCase):
         def catch_with_args_list():
             raise Exception("foo", 123)
 
-        self.assertIsNone(catch_with_args_list(), "Should return default value None")
+        self.assertIsNone(catch_with_args_list())
 
         @return_default_on_exception(with_args=("foo", 123))
         def catch_with_args_tuple():
             raise Exception("foo", 123)
 
-        self.assertIsNone(catch_with_args_tuple(), "Should return default value None")
+        self.assertIsNone(catch_with_args_tuple())
 
         @return_default_on_exception(with_args=("foo", 123))
         def catch_with_wrong_args():
             raise Exception("foo", 321)
 
         self.assertRaises(Exception, catch_with_wrong_args)
+
+        @return_default_on_exception(with_fields={"foo": 123, "bar": "baz"})
+        def catch_with_fields():
+            raise ExceptionWithFields(foo=123, bar="baz")
+
+        self.assertIsNone(catch_with_fields())
+
+        @return_default_on_exception(with_fields={"foo": 123})
+        def catch_with_some_fields():
+            raise ExceptionWithFields(foo=123, bar="baz")
+
+        self.assertIsNone(catch_with_some_fields())
+
+        @return_default_on_exception(with_fields={"foo": 123, "bar": "baz", "bad_field": 321})
+        def catch_with_nonexistent_fields():
+            raise ExceptionWithFields(foo=123, bar="baz")
+
+        self.assertRaises(ExceptionWithFields, catch_with_nonexistent_fields)
+
+        @return_default_on_exception(with_fields={"foo": 321, "bar": "baz"})
+        def catch_with_wrong_fields():
+            raise ExceptionWithFields(foo=123, bar="baz")
+
+        self.assertRaises(ExceptionWithFields, catch_with_wrong_fields)
 
     def test_reraise_exception_on_exception(self):
         @reraise_exception_on_exception(Exception)
@@ -168,7 +192,7 @@ class TestDecorators(unittest.TestCase):
         with self.assertRaises(Exception) as assertion:
             reraise_with_args()
 
-        self.assertEqual(assertion.exception.args, ("bar", 777), "Should reraise with args")
+        self.assertEqual(assertion.exception.args, ("bar", 777))
 
         @reraise_exception_on_exception(Exception("bar", 777), with_args=("foo", 123))
         def catch_and_reraise_with_args():
@@ -177,7 +201,31 @@ class TestDecorators(unittest.TestCase):
         with self.assertRaises(Exception) as assertion:
             reraise_with_args()
 
-        self.assertEqual(assertion.exception.args, ("bar", 777), "Should reraise with args")
+        self.assertEqual(assertion.exception.args, ("bar", 777))
+
+        @reraise_exception_on_exception(ExceptionA, with_fields={"foo": 123, "bar": "baz"})
+        def catch_with_fields():
+            raise ExceptionWithFields(foo=123, bar="baz")
+
+        self.assertRaises(ExceptionA, catch_with_fields)
+
+        @reraise_exception_on_exception(ExceptionA, with_fields={"foo": 123})
+        def catch_with_some_fields():
+            raise ExceptionWithFields(foo=123, bar="baz")
+
+        self.assertRaises(ExceptionA, catch_with_some_fields)
+
+        @reraise_exception_on_exception(ExceptionA, with_fields={"foo": 123, "bar": "baz", "bad_field": 321})
+        def catch_with_nonexistent_fields():
+            raise ExceptionWithFields(foo=123, bar="baz")
+
+        self.assertRaises(ExceptionWithFields, catch_with_nonexistent_fields)
+
+        @reraise_exception_on_exception(ExceptionA, with_fields={"foo": 321, "bar": "baz"})
+        def catch_with_wrong_fields():
+            raise ExceptionWithFields(foo=123, bar="baz")
+
+        self.assertRaises(ExceptionWithFields, catch_with_wrong_fields)
 
 
 if __name__ == '__main__':
