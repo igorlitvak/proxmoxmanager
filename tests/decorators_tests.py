@@ -2,6 +2,32 @@ from proxmoxmanager.utils import return_default_on_exception, reraise_exception_
 import unittest
 
 
+class ExceptionA(Exception):
+    """
+    Some exception
+    """
+    def __init__(self, *args):
+        super().__init__(*args)
+
+
+class ExceptionB(Exception):
+    """
+    Some exception
+    """
+    def __init__(self, *args):
+        super().__init__(*args)
+
+
+class ExceptionWithFields(Exception):
+    """
+    Some exception with fields
+    """
+    def __init__(self, foo, bar, *args):
+        self.foo = foo
+        self.bar = bar
+        super().__init__(*args)
+
+
 class TestDecorators(unittest.TestCase):
     """
     Unittest for decorators from proxmoxmanager.utils
@@ -26,15 +52,21 @@ class TestDecorators(unittest.TestCase):
 
         self.assertEqual(int_on_exception(), 123, "Should return default value 'foo'")
 
-        @return_default_on_exception(catch_errors=RuntimeError)
+        @return_default_on_exception()
+        def catch_any_exception():
+            raise ExceptionA
+
+        self.assertIsNone(catch_any_exception(), "Should return default value None")
+
+        @return_default_on_exception(catch_errors=ExceptionA)
         def catch_specific_exception():
-            raise RuntimeError
+            raise ExceptionA
 
         self.assertIsNone(catch_specific_exception(), "Should return default value None")
 
-        @return_default_on_exception(catch_errors=(ZeroDivisionError, RuntimeError))
+        @return_default_on_exception(catch_errors=(ExceptionA, ExceptionB))
         def catch_list_of_exceptions():
-            raise RuntimeError
+            raise ExceptionA
 
         self.assertIsNone(catch_list_of_exceptions(), "Should return default value None")
 
@@ -44,25 +76,25 @@ class TestDecorators(unittest.TestCase):
 
         self.assertRaises(Exception, catch_no_exceptions)
 
-        @return_default_on_exception(catch_errors=RuntimeError)
+        @return_default_on_exception(catch_errors=ExceptionB)
         def catch_wrong_exception():
-            raise Exception
+            raise ExceptionA
 
-        self.assertRaises(Exception, catch_wrong_exception)
+        self.assertRaises(ExceptionA, catch_wrong_exception)
 
-        @return_default_on_exception(catch_with_args=["foo", 123])
+        @return_default_on_exception(with_args=["foo", 123])
         def catch_with_args_list():
             raise Exception("foo", 123)
 
         self.assertIsNone(catch_with_args_list(), "Should return default value None")
 
-        @return_default_on_exception(catch_with_args=("foo", 123))
+        @return_default_on_exception(with_args=("foo", 123))
         def catch_with_args_tuple():
             raise Exception("foo", 123)
 
         self.assertIsNone(catch_with_args_tuple(), "Should return default value None")
 
-        @return_default_on_exception(catch_with_args=("foo", 123))
+        @return_default_on_exception(with_args=("foo", 123))
         def catch_with_wrong_args():
             raise Exception("foo", 321)
 
@@ -75,53 +107,59 @@ class TestDecorators(unittest.TestCase):
 
         self.assertRaises(Exception, exception_on_exception)
 
-        @reraise_exception_on_exception(RuntimeError)
-        def runtime_error_on_exception():
+        @reraise_exception_on_exception(ExceptionA)
+        def exception_a_on_exception():
             raise Exception
 
-        self.assertRaises(RuntimeError, runtime_error_on_exception)
+        self.assertRaises(ExceptionA, exception_a_on_exception)
 
-        @reraise_exception_on_exception(ZeroDivisionError, catch_errors=RuntimeError)
+        @reraise_exception_on_exception(ExceptionB, catch_errors=ExceptionA)
         def catch_specific_exception():
-            raise RuntimeError
+            raise ExceptionA
 
-        self.assertRaises(ZeroDivisionError, catch_specific_exception)
+        self.assertRaises(ExceptionB, catch_specific_exception)
 
-        @reraise_exception_on_exception(ZeroDivisionError, catch_errors=(ZeroDivisionError, RuntimeError))
+        @reraise_exception_on_exception(ExceptionB)
+        def catch_any_exception():
+            raise ExceptionA
+
+        self.assertRaises(ExceptionB, catch_any_exception)
+
+        @reraise_exception_on_exception(ExceptionB, catch_errors=(ExceptionA, ExceptionB))
         def catch_list_of_exceptions():
-            raise RuntimeError
+            raise ExceptionA
 
-        self.assertRaises(ZeroDivisionError, catch_list_of_exceptions)
+        self.assertRaises(ExceptionB, catch_list_of_exceptions)
 
-        @reraise_exception_on_exception(ZeroDivisionError, catch_errors=())
+        @reraise_exception_on_exception(ExceptionA, catch_errors=())
         def catch_no_exceptions():
             raise Exception
 
         self.assertRaises(Exception, catch_no_exceptions)
 
-        @reraise_exception_on_exception(ZeroDivisionError, catch_errors=RuntimeError)
+        @reraise_exception_on_exception(ExceptionB, catch_errors=ExceptionB)
         def catch_wrong_exception():
-            raise Exception
+            raise ExceptionA
 
-        self.assertRaises(Exception, catch_wrong_exception)
+        self.assertRaises(ExceptionA, catch_wrong_exception)
 
-        @reraise_exception_on_exception(ZeroDivisionError, catch_with_args=["foo", 123])
+        @reraise_exception_on_exception(ExceptionA, with_args=["foo", 123])
         def catch_with_args_list():
             raise Exception("foo", 123)
 
-        self.assertRaises(ZeroDivisionError, catch_with_args_list)
+        self.assertRaises(ExceptionA, catch_with_args_list)
 
-        @reraise_exception_on_exception(ZeroDivisionError, catch_with_args=("foo", 123))
+        @reraise_exception_on_exception(ExceptionA, with_args=("foo", 123))
         def catch_with_args_tuple():
             raise Exception("foo", 123)
 
-        self.assertRaises(ZeroDivisionError, catch_with_args_tuple)
+        self.assertRaises(ExceptionA, catch_with_args_tuple)
 
-        @reraise_exception_on_exception(ZeroDivisionError, catch_with_args=("foo", 123))
+        @reraise_exception_on_exception(ExceptionB, with_args=("foo", 123))
         def catch_with_wrong_args():
-            raise Exception("foo", 321)
+            raise ExceptionA("foo", 321)
 
-        self.assertRaises(Exception, catch_with_wrong_args)
+        self.assertRaises(ExceptionA, catch_with_wrong_args)
 
         @reraise_exception_on_exception(Exception("bar", 777))
         def reraise_with_args():
@@ -132,7 +170,7 @@ class TestDecorators(unittest.TestCase):
 
         self.assertEqual(assertion.exception.args, ("bar", 777), "Should reraise with args")
 
-        @reraise_exception_on_exception(Exception("bar", 777), catch_with_args=("foo", 123))
+        @reraise_exception_on_exception(Exception("bar", 777), with_args=("foo", 123))
         def catch_and_reraise_with_args():
             raise Exception("foo", 123)
 
