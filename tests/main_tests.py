@@ -2,6 +2,7 @@ from proxmoxmanager import ProxmoxManager
 # from proxmoxer import ResourceException
 # from proxmoxmanager.utils import reraise_exception_on_exception
 import unittest
+# TODO: Rewrite everything (currently doesn't work)
 
 
 class FooAPIWrapper:
@@ -40,7 +41,7 @@ class TestProxmoxManager(unittest.TestCase):
 
     def test_get_users(self):
         p = FooProxmoxManager("foo", "bar", "bat", "baz")
-        self.assertEqual(p.get_users(), FooAPIWrapper.get_users(), "Method is supposed to return raw data")
+        self.assertEqual(p.list_users(), FooAPIWrapper.get_users(), "Method is supposed to return raw data")
 
     def test_get_user(self):
         p = FooProxmoxManager("foo", "bar", "bat", "baz")
