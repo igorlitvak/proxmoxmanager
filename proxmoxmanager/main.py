@@ -1,5 +1,4 @@
 from proxmoxer import ProxmoxAPI
-from typing import Union, Sequence
 
 
 class ProxmoxManager:
@@ -49,11 +48,31 @@ class ProxmoxManager:
     def delete_vm(self, node: str, vmid: str):
         self._api.delete_vm(node=node, vmid=vmid)
 
-    def clone_vm(self, newid: str, node: str, vmid: str, name: str = None, full: bool = True):
+    def clone_vm(self, newid: str, node: str, vmid: str, name: str = None, full: bool = True, target: str = None):
         kwargs = {"newid": newid, "node": node, "vmid": vmid, "full": '1' if full else '0'}
         if name is not None:
             kwargs["name"] = name
+        if target is not None:
+            kwargs["target"] = target
         self._api.clone_vm(**kwargs)
+
+    def list_containers(self, node: str):
+        return self._api.list_containers(node=node)
+
+    def get_container(self, node: str, vmid: str):
+        return self._api.get_container(node=node, vmid=vmid)
+
+    def delete_container(self, node: str, vmid: str):
+        self._api.delete_container(node=node, vmid=vmid)
+
+    def clone_container(self, newid: str, node: str, vmid: str, hostname: str = None, full: bool = True,
+                        target: str = None):
+        kwargs = {"newid": newid, "node": node, "vmid": vmid, "full": '1' if full else '0'}
+        if hostname is not None:
+            kwargs["hostname"] = hostname
+        if target is not None:
+            kwargs["target"] = target
+        self._api.clone_container(**kwargs)
 
 
 class APIWrapper:
@@ -93,3 +112,15 @@ class APIWrapper:
 
     def clone_vm(self, newid: str, node: str, vmid: str, **kwargs):
         self._proxmoxer.nodes(node).qemu(vmid).clone.post(newid=newid, **kwargs)
+
+    def list_containers(self, node: str, **kwargs):
+        return self._proxmoxer.nodes(node).lxc.get(**kwargs)
+
+    def get_container(self, node: str, vmid: str, **kwargs):
+        return self._proxmoxer.nodes(node).lxc(vmid).get(**kwargs)
+
+    def delete_container(self, node: str, vmid: str, **kwargs):
+        self._proxmoxer.nodes(node).lxc(vmid).delete(**kwargs)
+
+    def clone_container(self, newid: str, node: str, vmid: str, **kwargs):
+        self._proxmoxer.nodes(node).lxc(vmid).clone.post(newid=newid, **kwargs)
