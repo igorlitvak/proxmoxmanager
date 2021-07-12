@@ -81,7 +81,8 @@ class APIWrapper:
     """
 
     def __init__(self, host: str, user: str, token_name: str, token_value: str):
-        self._proxmoxer = ProxmoxAPI(host=host, user=user, token_name=token_name, token_value=token_value)
+        self._proxmoxer = ProxmoxAPI(host=host, user=user, token_name=token_name, token_value=token_value,
+                                     verify_ssl=False)
 
     def list_users(self, **kwargs):
         return self._proxmoxer.access.users.get(**kwargs)

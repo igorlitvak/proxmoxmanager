@@ -1,8 +1,5 @@
 from setuptools import setup, find_packages
 
-with open("requirements.txt") as f:
-    requirements = f.read().splitlines()
-
 long_description_filename = "README.md"
 try:
     with open(long_description_filename, "r", encoding="utf-8") as f:
@@ -17,7 +14,7 @@ setup(
     name="proxmoxmanager",
 
     # Current version
-    version="0.0.1",
+    version="0.0.5",
 
     # Short description
     description="Smart Proxmox VE API wrapper for automatically managing resources",
@@ -34,17 +31,17 @@ setup(
     # Project's author
     author="Igor Litvak, ITMO University",
 
-    # Which directory contains source code
-    package_dir={"": "proxmoxmanager"},
-
     # Which packages are included
-    packages=find_packages(where="proxmoxmanager"),
+    packages=find_packages(),
 
     # Which Python version is required to run this project
     python_requires=">=3.8, <4",  # TODO: test on earlier versions
 
     # Which external projects this project depends on
-    install_requires=requirements,
+    install_requires=[
+        "proxmoxer",
+        "requests"
+    ],
 
     # Metadata
     classifiers=[
