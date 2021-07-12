@@ -8,6 +8,7 @@ class ProxmoxManager:
 
     def __init__(self, host: str, user: str, token_name: str, token_value: str):
         self._api = APIWrapper(host=host, user=user, token_name=token_name, token_value=token_value)
+        self._api.get_version()  # TODO: catch and reraise if exception occurs
 
     def list_users(self):
         """
@@ -83,6 +84,9 @@ class APIWrapper:
     def __init__(self, host: str, user: str, token_name: str, token_value: str):
         self._proxmoxer = ProxmoxAPI(host=host, user=user, token_name=token_name, token_value=token_value,
                                      verify_ssl=False)
+
+    def get_version(self):
+        return self._proxmoxer.version.get()
 
     def list_users(self, **kwargs):
         return self._proxmoxer.access.users.get(**kwargs)
