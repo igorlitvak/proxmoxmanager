@@ -107,10 +107,10 @@ class APIWrapper:
         return self._proxmoxer.cluster.resources.get(**kwargs)
 
     def list_vms(self, node, **kwargs):
-        self._proxmoxer.nodes(node).qemu.get(**kwargs)
+        return self._proxmoxer.nodes(node).qemu.get(**kwargs)
 
     def get_vm(self, node: str, vmid: str, **kwargs):
-        self._proxmoxer.nodes(node).qemu(vmid).get(**kwargs)
+        return self._proxmoxer.nodes(node).qemu(vmid).get(**kwargs)
 
     def delete_vm(self, node: str, vmid: str, **kwargs):
         self._proxmoxer.nodes(node).qemu(vmid).delete(**kwargs)
