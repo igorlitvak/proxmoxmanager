@@ -153,6 +153,92 @@ class ProxmoxManager:
             kwargs["target"] = target
         return self._api.clone_container(**kwargs)
 
+    def start_vm(self, node: str, vmid: str, timeout: int = None) -> str:
+        """
+        Start virtual machine
+        :param node
+        :param vmid
+        :param timeout: Number of seconds to wait (optional)
+        :return: ID of task
+        """
+        kwargs = {"node": node, "vmid": vmid}
+        if timeout is not None:
+            kwargs["timeout"] = timeout
+        return self._api.start_vm(**kwargs)
+
+    def stop_vm(self, node: str, vmid: str, timeout: int = None) -> str:
+        """
+        Stop (unsafely) virtual machine
+        :param node
+        :param vmid
+        :param timeout: Number of seconds to wait (optional)
+        :return: ID of task
+        """
+        kwargs = {"node": node, "vmid": vmid}
+        if timeout is not None:
+            kwargs["timeout"] = timeout
+        return self._api.stop_vm(**kwargs)
+
+    def shutdown_vm(self, node: str, vmid: str, timeout: int = None, force_stop: bool = True) -> str:
+        """
+        Shutdown (safely) virtual machine
+        :param node
+        :param vmid
+        :param timeout: Number of seconds to wait (optional)
+        :param force_stop: Whether to stop a VM is shutdown failed (optional, default=True)
+        :return: ID of task
+        """
+        kwargs = {"node": node, "vmid": vmid, "forceStop": '1' if force_stop else '0'}
+        if timeout is not None:
+            kwargs["timeout"] = timeout
+        return self._api.shutdown_vm(**kwargs)
+
+    def reset_vm(self, node: str, vmid: str) -> str:
+        """
+        Reset virtual machine
+        :param node
+        :param vmid
+        :return: ID of task
+        """
+        kwargs = {"node": node, "vmid": vmid}
+        return self._api.reset_vm(**kwargs)
+
+    def reboot_vm(self, node: str, vmid: str, timeout: int = None) -> str:
+        """
+        Reboot virtual machine
+        :param node
+        :param vmid
+        :param timeout: Number of seconds to wait (optional)
+        :return: ID of task
+        """
+        kwargs = {"node": node, "vmid": vmid}
+        if timeout is not None:
+            kwargs["timeout"] = timeout
+        return self._api.reboot_vm(**kwargs)
+
+    def suspend_vm(self, node: str, vmid: str, to_disk: bool = False) -> str:
+        """
+        Suspend virtual machine
+        :param node
+        :param vmid
+        :param to_disk: Whether to suspend VM to disk (optional, defaul=False)
+        :return: ID of task
+        """
+        kwargs = {"node": node, "vmid": vmid, "todisk": '1' if to_disk else '0'}
+        return self._api.suspend_vm(**kwargs)
+
+    def resume_vm(self, node: str, vmid: str) -> str:
+        """
+        Resume virtual machine
+        :param node
+        :param vmid
+        :return: ID of task
+        """
+        kwargs = {"node": node, "vmid": vmid}
+        return self._api.resume_vm(**kwargs)
+
+    # TODO: add same methods for LXC
+
 
 class APIWrapper:
     """
