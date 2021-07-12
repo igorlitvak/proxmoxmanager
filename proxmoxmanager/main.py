@@ -207,3 +207,45 @@ class APIWrapper:
 
     def clone_container(self, newid: str, node: str, vmid: str, **kwargs):
         return self._proxmoxer.nodes(node).lxc(vmid).clone.post(newid=newid, **kwargs)
+
+    def start_vm(self, node: str, vmid: str, **kwargs):
+        return self._proxmoxer.nodes(node).qemu(vmid).status.start.post(**kwargs)
+
+    def stop_vm(self, node: str, vmid: str, **kwargs):
+        return self._proxmoxer.nodes(node).qemu(vmid).status.stop.post(**kwargs)
+
+    def shutdown_vm(self, node: str, vmid: str, **kwargs):
+        return self._proxmoxer.nodes(node).qemu(vmid).status.shutdown.post(**kwargs)
+
+    def reset_vm(self, node: str, vmid: str, **kwargs):
+        return self._proxmoxer.nodes(node).qemu(vmid).status.reset.post(**kwargs)
+
+    def reboot_vm(self, node: str, vmid: str, **kwargs):
+        return self._proxmoxer.nodes(node).qemu(vmid).status.reboot.post(**kwargs)
+
+    def suspend_vm(self, node: str, vmid: str, **kwargs):
+        return self._proxmoxer.nodes(node).qemu(vmid).status.suspend.post(**kwargs)
+
+    def resume_vm(self, node: str, vmid: str, **kwargs):
+        return self._proxmoxer.nodes(node).qemu(vmid).status.resume.post(**kwargs)
+
+    def start_container(self, node: str, vmid: str, **kwargs):
+        return self._proxmoxer.nodes(node).lxc(vmid).status.start.post(**kwargs)
+
+    def stop_container(self, node: str, vmid: str, **kwargs):
+        return self._proxmoxer.nodes(node).lxc(vmid).status.stop.post(**kwargs)
+
+    def shutdown_container(self, node: str, vmid: str, **kwargs):
+        return self._proxmoxer.nodes(node).lxc(vmid).status.shutdown.post(**kwargs)
+
+    def reset_container(self, node: str, vmid: str, **kwargs):
+        return self._proxmoxer.nodes(node).lxc(vmid).status.reset.post(**kwargs)
+
+    def reboot_container(self, node: str, vmid: str, **kwargs):
+        return self._proxmoxer.nodes(node).lxc(vmid).status.reboot.post(**kwargs)
+
+    def suspend_container(self, node: str, vmid: str, **kwargs):
+        return self._proxmoxer.nodes(node).lxc(vmid).status.suspend.post(**kwargs)
+
+    def resume_container(self, node: str, vmid: str, **kwargs):
+        return self._proxmoxer.nodes(node).lxc(vmid).status.resume.post(**kwargs)
