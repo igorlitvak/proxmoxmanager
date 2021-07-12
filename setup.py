@@ -14,7 +14,7 @@ setup(
     name="proxmoxmanager",
 
     # Current version
-    version="0.0.5",
+    version="0.1.1",
 
     # Short description
     description="Smart Proxmox VE API wrapper for automatically managing resources",
@@ -45,7 +45,7 @@ setup(
 
     # Metadata
     classifiers=[
-        "Development Status :: 2 - Pre-Alpha",
+        "Development Status :: 3 - Alpha",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3",
     ],

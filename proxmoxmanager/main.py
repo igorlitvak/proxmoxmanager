@@ -33,6 +33,8 @@ class ProxmoxManager:
         :param kwargs: Other arguments passed to Proxmox API
         :return: None
         """
+        # TODO: check that username looks like username@pam
+        # TODO: ckeck that password is 5+ characters long
         return self._api.create_user(userid=userid, password=password, **kwargs)
 
     def list_nodes(self) -> list:
@@ -78,17 +80,17 @@ class ProxmoxManager:
         """
         return self._api.get_vm(node=node, vmid=vmid)
 
-    def delete_vm(self, node: str, vmid: str) -> None:
+    def delete_vm(self, node: str, vmid: str) -> str:
         """
         Delete vitrual machine by id
         :param node
         :param vmid
-        :return: None
+        :return: ID of deleting task
         """
         return self._api.delete_vm(node=node, vmid=vmid)
 
     def clone_vm(self, newid: str, node: str, vmid: str, name: str = None, full: bool = True,
-                 target: str = None) -> None:
+                 target: str = None) -> str:
         """
         Clone virtual machine
         :param newid: ID of new VM
@@ -97,7 +99,7 @@ class ProxmoxManager:
         :param name: Name of new VM (optional)
         :param full: Whether to make storage unlinked (optional, default=True)
         :param target: New node ID (optional)
-        :return: None
+        :return: ID of cloning task
         """
         kwargs = {"newid": newid, "node": node, "vmid": vmid, "full": '1' if full else '0'}
         if name is not None:
@@ -123,17 +125,17 @@ class ProxmoxManager:
         """
         return self._api.get_container(node=node, vmid=vmid)
 
-    def delete_container(self, node: str, vmid: str) -> None:
+    def delete_container(self, node: str, vmid: str) -> str:
         """
         Delete LXC container by id
         :param node
         :param vmid
-        :return: None
+        :return: ID of deleting task
         """
         return self._api.delete_container(node=node, vmid=vmid)
 
     def clone_container(self, newid: str, node: str, vmid: str, hostname: str = None, full: bool = True,
-                        target: str = None) -> None:
+                        target: str = None) -> str:
         """
         Clone LXC container
         :param newid: ID of new LXC
@@ -142,7 +144,7 @@ class ProxmoxManager:
         :param hostname: Name of new LXC (optional)
         :param full: Whether to make storage unlinked (optional, default=True)
         :param target: New node ID (optional)
-        :return: None
+        :return: ID of cloning task
         """
         kwargs = {"newid": newid, "node": node, "vmid": vmid, "full": '1' if full else '0'}
         if hostname is not None:
@@ -186,7 +188,7 @@ class APIWrapper:
         return self._proxmoxer.nodes(node).qemu.get(**kwargs)
 
     def get_vm(self, node: str, vmid: str, **kwargs):
-        return self._proxmoxer.nodes(node).qemu(vmid).get(**kwargs)
+        return self._proxmoxer.nodes(node).qemu(vmid).status.current.get(**kwargs)
 
     def delete_vm(self, node: str, vmid: str, **kwargs):
         return self._proxmoxer.nodes(node).qemu(vmid).delete(**kwargs)
@@ -198,7 +200,7 @@ class APIWrapper:
         return self._proxmoxer.nodes(node).lxc.get(**kwargs)
 
     def get_container(self, node: str, vmid: str, **kwargs):
-        return self._proxmoxer.nodes(node).lxc(vmid).get(**kwargs)
+        return self._proxmoxer.nodes(node).lxc(vmid).status.current.get(**kwargs)
 
     def delete_container(self, node: str, vmid: str, **kwargs):
         return self._proxmoxer.nodes(node).lxc(vmid).delete(**kwargs)
