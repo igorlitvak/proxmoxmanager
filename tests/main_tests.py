@@ -38,8 +38,8 @@ class TestProxmoxManager(unittest.TestCase):
 
     def test_get_vm_status(self):
         return_value = {"vmid": "100", "name": "foo"}
-        with patch.object(APIWrapper, "get_vm", return_value=return_value) as target_method:
-            self.assertEqual(self.proxmoxmanager.get_vm(node="node1", vmid="100"), return_value)
+        with patch.object(APIWrapper, "get_vm_status", return_value=return_value) as target_method:
+            self.assertEqual(self.proxmoxmanager.get_vm_status(node="node1", vmid="100"), return_value)
             target_method.assert_called_once_with(node="node1", vmid="100")
 
     def test_delete_vm(self):
@@ -64,8 +64,8 @@ class TestProxmoxManager(unittest.TestCase):
 
     def test_get_container_status(self):
         return_value = {"vmid": "100", "hostname": "foo"}
-        with patch.object(APIWrapper, "get_container", return_value=return_value) as target_method:
-            self.assertEqual(self.proxmoxmanager.get_container(node="node1", vmid="100"), return_value)
+        with patch.object(APIWrapper, "get_container_status", return_value=return_value) as target_method:
+            self.assertEqual(self.proxmoxmanager.get_container_status(node="node1", vmid="100"), return_value)
             target_method.assert_called_once_with(node="node1", vmid="100")
 
     def test_delete_container(self):
@@ -159,6 +159,24 @@ class TestProxmoxManager(unittest.TestCase):
         with patch.object(APIWrapper, "resume_container", return_value=return_value) as target_method:
             self.assertEqual(self.proxmoxmanager.resume_container(node="node1", vmid="100"), return_value)
             target_method.assert_called_once_with(node="node1", vmid="100")
+
+    def test_list_tasks(self):
+        return_value = [{"upid": "TASKID1", "status": "stopped"}, {"upid": "TASKID2", "status": "stopped"}]
+        with patch.object(APIWrapper, "list_tasks", return_value=return_value) as target_method:
+            self.assertEqual(self.proxmoxmanager.list_tasks(node="node1"), return_value)
+            target_method.assert_called_once_with(node="node1")
+
+    def test_get_task_logs(self):
+        return_value = ["foo", "bar"]
+        with patch.object(APIWrapper, "get_task_logs", return_value=return_value) as target_method:
+            self.assertEqual(self.proxmoxmanager.get_task_logs(node="node1", upid="100"), return_value)
+            target_method.assert_called_once_with(node="node1", upid="100")
+
+    def test_get_task_status(self):
+        return_value = {"upid": "TASKID1", "status": "stopped"}
+        with patch.object(APIWrapper, "get_task_status", return_value=return_value) as target_method:
+            self.assertEqual(self.proxmoxmanager.get_task_status(node="node1", upid="100"), return_value)
+            target_method.assert_called_once_with(node="node1", upid="100")
 
 
 if __name__ == "__main__":

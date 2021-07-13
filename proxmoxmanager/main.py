@@ -70,7 +70,7 @@ class ProxmoxManager:
         """
         return self._api.list_vms(node=node)
 
-    def get_vm(self, node: str, vmid: str) -> dict:
+    def get_vm_status(self, node: str, vmid: str) -> dict:
         """
         Get specific virtual machine by id
         :param node
@@ -115,7 +115,7 @@ class ProxmoxManager:
         """
         return self._api.list_containers(node=node)
 
-    def get_container(self, node: str, vmid: str) -> dict:
+    def get_container_status(self, node: str, vmid: str) -> dict:
         """
         Get specific LXC container by id
         :param node
@@ -303,6 +303,32 @@ class ProxmoxManager:
         kwargs = {"node": node, "vmid": vmid}
         return self._api.resume_container(**kwargs)
 
+    def list_tasks(self, node: str) -> list:
+        """
+        List all finished tasks
+        :param node
+        :return: List of tasks in JSON-like format
+        """
+        return self._api.list_tasks(node=node)
+
+    def get_task_logs(self, node: str, upid: str) -> list:
+        """
+        Get logs for specific task
+        :param node
+        :param upid
+        :return: List of tasks in JSON-like format
+        """
+        return self._api.get_task_logs(node=node, upid=upid)
+
+    def get_task_status(self, node: str, upid: str) -> dict:
+        """
+        Get status of specific task
+        :param node
+        :param upid
+        :return: Task status in JSOB-like format
+        """
+        return self._api.get_task_status(node=node, upid=upid)
+
 
 class APIWrapper:
     """
@@ -396,3 +422,12 @@ class APIWrapper:
 
     def resume_container(self, node: str, vmid: str, **kwargs):
         return self._proxmoxer.nodes(node).lxc(vmid).status.resume.post(**kwargs)
+
+    def list_tasks(self, node: str, **kwargs):
+        return self._proxmoxer.nodes(node).tasks.get(**kwargs)
+
+    def get_task_logs(self, node: str, upid: str, **kwargs):
+        return self._proxmoxer.nodes(node).tasks(upid).log.get(**kwargs)
+
+    def get_task_status(self, node: str, upid: str, **kwargs):
+        return self._proxmoxer.nodes(node).tasks(upid).status.get(**kwargs)
