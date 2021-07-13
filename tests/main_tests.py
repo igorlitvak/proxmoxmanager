@@ -1,6 +1,6 @@
 from proxmoxmanager.main import ProxmoxManager, APIWrapper
 import unittest
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
 
 class TestProxmoxManager(unittest.TestCase):
