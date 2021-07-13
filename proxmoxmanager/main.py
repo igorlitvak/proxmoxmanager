@@ -168,7 +168,7 @@ class ProxmoxManager:
 
     def stop_vm(self, node: str, vmid: str, timeout: int = None) -> str:
         """
-        Stop (unsafely) virtual machine
+        Stop virtual machine (unsafely)
         :param node
         :param vmid
         :param timeout: Number of seconds to wait (optional)
@@ -181,11 +181,11 @@ class ProxmoxManager:
 
     def shutdown_vm(self, node: str, vmid: str, timeout: int = None, force_stop: bool = True) -> str:
         """
-        Shutdown (safely) virtual machine
+        Shutdown virtual machine (safely)
         :param node
         :param vmid
         :param timeout: Number of seconds to wait (optional)
-        :param force_stop: Whether to stop a VM is shutdown failed (optional, default=True)
+        :param force_stop: Whether to stop a VM if shutdown failed (optional, default=True)
         :return: ID of task
         """
         kwargs = {"node": node, "vmid": vmid, "forceStop": '1' if force_stop else '0'}
@@ -237,7 +237,72 @@ class ProxmoxManager:
         kwargs = {"node": node, "vmid": vmid}
         return self._api.resume_vm(**kwargs)
 
-    # TODO: add same methods for LXC
+    def start_container(self, node: str, vmid: str) -> str:
+        """
+        Start container
+        :param node
+        :param vmid
+        :return: ID of task
+        """
+        kwargs = {"node": node, "vmid": vmid}
+        return self._api.start_container(**kwargs)
+
+    def stop_container(self, node: str, vmid: str) -> str:
+        """
+        Stop container (unsafely)
+        :param node
+        :param vmid
+        :return: ID of task
+        """
+        kwargs = {"node": node, "vmid": vmid}
+        return self._api.stop_container(**kwargs)
+
+    def shutdown_container(self, node: str, vmid: str, timeout: int = None, force_stop: bool = True) -> str:
+        """
+        Shutdown container (safely)
+        :param node
+        :param vmid
+        :param timeout: Number of seconds to wait (optional)
+        :param force_stop: Whether to stop a container if shutdown failed (optional, default=True)
+        :return: ID of task
+        """
+        kwargs = {"node": node, "vmid": vmid, "forceStop": '1' if force_stop else '0'}
+        if timeout is not None:
+            kwargs["timeout"] = timeout
+        return self._api.shutdown_container(**kwargs)
+
+    def reboot_container(self, node: str, vmid: str, timeout: int = None) -> str:
+        """
+        Reboot container
+        :param node
+        :param vmid
+        :param timeout: Number of seconds to wait (optional)
+        :return: ID of task
+        """
+        kwargs = {"node": node, "vmid": vmid}
+        if timeout is not None:
+            kwargs["timeout"] = timeout
+        return self._api.reboot_container(**kwargs)
+
+    def suspend_container(self, node: str, vmid: str) -> str:
+        """
+        Suspend container
+        :param node
+        :param vmid
+        :return: ID of task
+        """
+        kwargs = {"node": node, "vmid": vmid}
+        return self._api.suspend_container(**kwargs)
+
+    def resume_container(self, node: str, vmid: str) -> str:
+        """
+        Resume container
+        :param node
+        :param vmid
+        :return: ID of task
+        """
+        kwargs = {"node": node, "vmid": vmid}
+        return self._api.resume_container(**kwargs)
 
 
 class APIWrapper:
@@ -323,9 +388,6 @@ class APIWrapper:
 
     def shutdown_container(self, node: str, vmid: str, **kwargs):
         return self._proxmoxer.nodes(node).lxc(vmid).status.shutdown.post(**kwargs)
-
-    def reset_container(self, node: str, vmid: str, **kwargs):
-        return self._proxmoxer.nodes(node).lxc(vmid).status.reset.post(**kwargs)
 
     def reboot_container(self, node: str, vmid: str, **kwargs):
         return self._proxmoxer.nodes(node).lxc(vmid).status.reboot.post(**kwargs)
