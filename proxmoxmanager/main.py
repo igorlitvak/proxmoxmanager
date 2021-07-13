@@ -162,7 +162,7 @@ class ProxmoxManager:
         """
         kwargs = {"node": node, "vmid": vmid}
         if timeout is not None:
-            kwargs["timeout"] = timeout
+            kwargs["timeout"] = str(timeout)
         return self._api.start_vm(**kwargs)
 
     def stop_vm(self, node: str, vmid: str, timeout: int = None) -> str:
@@ -175,7 +175,7 @@ class ProxmoxManager:
         """
         kwargs = {"node": node, "vmid": vmid}
         if timeout is not None:
-            kwargs["timeout"] = timeout
+            kwargs["timeout"] = str(timeout)
         return self._api.stop_vm(**kwargs)
 
     def shutdown_vm(self, node: str, vmid: str, timeout: int = None, force_stop: bool = True) -> str:
@@ -189,7 +189,7 @@ class ProxmoxManager:
         """
         kwargs = {"node": node, "vmid": vmid, "forceStop": '1' if force_stop else '0'}
         if timeout is not None:
-            kwargs["timeout"] = timeout
+            kwargs["timeout"] = str(timeout)
         return self._api.shutdown_vm(**kwargs)
 
     def reset_vm(self, node: str, vmid: str) -> str:
@@ -212,7 +212,7 @@ class ProxmoxManager:
         """
         kwargs = {"node": node, "vmid": vmid}
         if timeout is not None:
-            kwargs["timeout"] = timeout
+            kwargs["timeout"] = str(timeout)
         return self._api.reboot_vm(**kwargs)
 
     def suspend_vm(self, node: str, vmid: str, to_disk: bool = False) -> str:
@@ -267,7 +267,7 @@ class ProxmoxManager:
         """
         kwargs = {"node": node, "vmid": vmid, "forceStop": '1' if force_stop else '0'}
         if timeout is not None:
-            kwargs["timeout"] = timeout
+            kwargs["timeout"] = str(timeout)
         return self._api.shutdown_container(**kwargs)
 
     def reboot_container(self, node: str, vmid: str, timeout: int = None) -> str:
@@ -280,7 +280,7 @@ class ProxmoxManager:
         """
         kwargs = {"node": node, "vmid": vmid}
         if timeout is not None:
-            kwargs["timeout"] = timeout
+            kwargs["timeout"] = str(timeout)
         return self._api.reboot_container(**kwargs)
 
     def suspend_container(self, node: str, vmid: str) -> str:

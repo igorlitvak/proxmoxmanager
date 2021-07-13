@@ -51,7 +51,7 @@ class TestProxmoxManager(unittest.TestCase):
     def test_clone_vm(self):
         return_value = "TASKID"
         with patch.object(APIWrapper, "clone_vm", return_value=return_value) as target_method:
-            self.assertEqual(self.proxmoxmanager.clone_vm(newid="101", node="node1", vmid="100", full=True, name="bar",
+            self.assertEqual(self.proxmoxmanager.clone_vm(newid="101", node="node1", vmid="100", name="bar",
                                                           target="node2"), return_value)
             target_method.assert_called_once_with(newid="101", node="node1", vmid="100", full="1", name="bar",
                                                   target="node2")
@@ -77,12 +77,88 @@ class TestProxmoxManager(unittest.TestCase):
     def test_clone_container(self):
         return_value = "TASKID"
         with patch.object(APIWrapper, "clone_container", return_value=return_value) as target_method:
-            self.assertEqual(self.proxmoxmanager.clone_container(newid="101", node="node1", vmid="100", full=True,
-                                                                 hostname="bar", target="node2"), return_value)
+            self.assertEqual(self.proxmoxmanager.clone_container(newid="101", node="node1", vmid="100", hostname="bar",
+                                                                 target="node2"), return_value)
             target_method.assert_called_once_with(newid="101", node="node1", vmid="100", full="1", hostname="bar",
                                                   target="node2")
 
-    # TODO: add tests for power management methods
+    def test_start_vm(self):
+        return_value = "TASKID"
+        with patch.object(APIWrapper, "start_vm", return_value=return_value) as target_method:
+            self.assertEqual(self.proxmoxmanager.start_vm(node="node1", vmid="100", timeout=10), return_value)
+            target_method.assert_called_once_with(node="node1", vmid="100", timeout="10")
+
+    def test_stop_vm(self):
+        return_value = "TASKID"
+        with patch.object(APIWrapper, "stop_vm", return_value=return_value) as target_method:
+            self.assertEqual(self.proxmoxmanager.stop_vm(node="node1", vmid="100", timeout=10), return_value)
+            target_method.assert_called_once_with(node="node1", vmid="100", timeout="10")
+
+    def test_shutdown_vm(self):
+        return_value = "TASKID"
+        with patch.object(APIWrapper, "shutdown_vm", return_value=return_value) as target_method:
+            self.assertEqual(self.proxmoxmanager.shutdown_vm(node="node1", vmid="100", timeout=10), return_value)
+            target_method.assert_called_once_with(node="node1", vmid="100", timeout="10", forceStop="1")
+
+    def test_reset_vm(self):
+        return_value = "TASKID"
+        with patch.object(APIWrapper, "reset_vm", return_value=return_value) as target_method:
+            self.assertEqual(self.proxmoxmanager.reset_vm(node="node1", vmid="100"), return_value)
+            target_method.assert_called_once_with(node="node1", vmid="100")
+
+    def test_reboot_vm(self):
+        return_value = "TASKID"
+        with patch.object(APIWrapper, "reboot_vm", return_value=return_value) as target_method:
+            self.assertEqual(self.proxmoxmanager.reboot_vm(node="node1", vmid="100", timeout=10), return_value)
+            target_method.assert_called_once_with(node="node1", vmid="100", timeout="10")
+
+    def test_suspend_vm(self):
+        return_value = "TASKID"
+        with patch.object(APIWrapper, "suspend_vm", return_value=return_value) as target_method:
+            self.assertEqual(self.proxmoxmanager.suspend_vm(node="node1", vmid="100"), return_value)
+            target_method.assert_called_once_with(node="node1", vmid="100", todisk="0")
+
+    def test_resume_vm(self):
+        return_value = "TASKID"
+        with patch.object(APIWrapper, "resume_vm", return_value=return_value) as target_method:
+            self.assertEqual(self.proxmoxmanager.resume_vm(node="node1", vmid="100"), return_value)
+            target_method.assert_called_once_with(node="node1", vmid="100")
+
+    def test_start_container(self):
+        return_value = "TASKID"
+        with patch.object(APIWrapper, "start_container", return_value=return_value) as target_method:
+            self.assertEqual(self.proxmoxmanager.start_container(node="node1", vmid="100"), return_value)
+            target_method.assert_called_once_with(node="node1", vmid="100")
+
+    def test_stop_container(self):
+        return_value = "TASKID"
+        with patch.object(APIWrapper, "stop_container", return_value=return_value) as target_method:
+            self.assertEqual(self.proxmoxmanager.stop_container(node="node1", vmid="100"), return_value)
+            target_method.assert_called_once_with(node="node1", vmid="100")
+
+    def test_shutdown_container(self):
+        return_value = "TASKID"
+        with patch.object(APIWrapper, "shutdown_container", return_value=return_value) as target_method:
+            self.assertEqual(self.proxmoxmanager.shutdown_container(node="node1", vmid="100", timeout=10), return_value)
+            target_method.assert_called_once_with(node="node1", vmid="100", timeout="10", forceStop="1")
+
+    def test_reboot_container(self):
+        return_value = "TASKID"
+        with patch.object(APIWrapper, "reboot_container", return_value=return_value) as target_method:
+            self.assertEqual(self.proxmoxmanager.reboot_container(node="node1", vmid="100", timeout=10), return_value)
+            target_method.assert_called_once_with(node="node1", vmid="100", timeout="10")
+
+    def test_suspend_container(self):
+        return_value = "TASKID"
+        with patch.object(APIWrapper, "suspend_container", return_value=return_value) as target_method:
+            self.assertEqual(self.proxmoxmanager.suspend_container(node="node1", vmid="100"), return_value)
+            target_method.assert_called_once_with(node="node1", vmid="100")
+
+    def test_resume_container(self):
+        return_value = "TASKID"
+        with patch.object(APIWrapper, "resume_container", return_value=return_value) as target_method:
+            self.assertEqual(self.proxmoxmanager.resume_container(node="node1", vmid="100"), return_value)
+            target_method.assert_called_once_with(node="node1", vmid="100")
 
 
 if __name__ == "__main__":
