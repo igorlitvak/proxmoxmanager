@@ -22,7 +22,7 @@ class ProxmoxManager:
         :param userid
         :return: User info in JSON-like format
         """
-        return self._api.get_user(userid)
+        return self._api.get_user(userid=userid)
 
     def create_user(self, userid: str, password: str, **kwargs) -> None:
         """
