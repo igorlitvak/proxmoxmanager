@@ -77,7 +77,7 @@ class ProxmoxManager:
         :param vmid
         :return: Virtual machine info in JSON-like format
         """
-        return self._api.get_vm(node=node, vmid=vmid)
+        return self._api.get_vm_status(node=node, vmid=vmid)
 
     def delete_vm(self, node: str, vmid: str) -> str:
         """
@@ -122,7 +122,7 @@ class ProxmoxManager:
         :param vmid
         :return: Container info in JSON-like format
         """
-        return self._api.get_container(node=node, vmid=vmid)
+        return self._api.get_container_status(node=node, vmid=vmid)
 
     def delete_container(self, node: str, vmid: str) -> str:
         """
@@ -337,7 +337,7 @@ class APIWrapper:
     def list_vms(self, node, **kwargs):
         return self._proxmoxer.nodes(node).qemu.get(**kwargs)
 
-    def get_vm(self, node: str, vmid: str, **kwargs):
+    def get_vm_status(self, node: str, vmid: str, **kwargs):
         return self._proxmoxer.nodes(node).qemu(vmid).status.current.get(**kwargs)
 
     def delete_vm(self, node: str, vmid: str, **kwargs):
@@ -349,7 +349,7 @@ class APIWrapper:
     def list_containers(self, node: str, **kwargs):
         return self._proxmoxer.nodes(node).lxc.get(**kwargs)
 
-    def get_container(self, node: str, vmid: str, **kwargs):
+    def get_container_status(self, node: str, vmid: str, **kwargs):
         return self._proxmoxer.nodes(node).lxc(vmid).status.current.get(**kwargs)
 
     def delete_container(self, node: str, vmid: str, **kwargs):

@@ -36,7 +36,7 @@ class TestProxmoxManager(unittest.TestCase):
             self.assertEqual(self.proxmoxmanager.list_vms(node="node1"), return_value)
             target_method.assert_called_once_with(node="node1")
 
-    def test_get_vm(self):
+    def test_get_vm_status(self):
         return_value = {"vmid": "100", "name": "foo"}
         with patch.object(APIWrapper, "get_vm", return_value=return_value) as target_method:
             self.assertEqual(self.proxmoxmanager.get_vm(node="node1", vmid="100"), return_value)
@@ -62,7 +62,7 @@ class TestProxmoxManager(unittest.TestCase):
             self.assertEqual(self.proxmoxmanager.list_containers(node="node1"), return_value)
             target_method.assert_called_once_with(node="node1")
 
-    def test_get_container(self):
+    def test_get_container_status(self):
         return_value = {"vmid": "100", "hostname": "foo"}
         with patch.object(APIWrapper, "get_container", return_value=return_value) as target_method:
             self.assertEqual(self.proxmoxmanager.get_container(node="node1", vmid="100"), return_value)
