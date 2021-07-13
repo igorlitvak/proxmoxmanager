@@ -8,7 +8,6 @@ class ProxmoxManager:
 
     def __init__(self, host: str, user: str, token_name: str, token_value: str):
         self._api = APIWrapper(host=host, user=user, token_name=token_name, token_value=token_value)
-        self._api.get_version()  # Ping  # TODO: catch and reraise if exception occurs
 
     def list_users(self) -> list:
         """

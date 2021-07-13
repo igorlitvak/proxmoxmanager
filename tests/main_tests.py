@@ -1,54 +1,15 @@
-from proxmoxmanager import ProxmoxManager
-# from proxmoxer import ResourceException
-# from proxmoxmanager.utils import reraise_exception_on_exception
+from proxmoxmanager.main import ProxmoxManager, APIWrapper
 import unittest
-# TODO: Rewrite everything (currently doesn't work)
-
-
-class FooAPIWrapper:
-    """
-    Placeholder for APIWrapper class that does not require to connect to anything
-    """
-
-    def __init__(self, *args, **kwargs):
-        pass
-
-    @staticmethod
-    def get_users():
-        return [{"userid": "1", "username": "user1"}, {"userid": "2", "username": "user2"}]
-
-    @staticmethod
-    # @reraise_exception_on_exception(ResourceException)
-    def get_user(userid: str):
-        users = [{"userid": "1", "username": "user1"}, {"userid": "2", "username": "user2"}]
-        return list(filter(lambda u: u["userid"] == userid, users))[0]
-
-
-class FooProxmoxManager(ProxmoxManager):
-    """
-    PromoxmoxManager class that is modified to use PlaceholderAPIWrapper
-    """
-
-    def __init__(self, host: str, user: str, token_name: str, token_value: str):
-        # Override parent class initialization
-        self._api = FooAPIWrapper(host=host, user=user, token_name=token_name, token_value=token_value)
+from unittest.mock import Mock, patch
 
 
 class TestProxmoxManager(unittest.TestCase):
-    """
-    Unittest for ProxmoxManagerClass
-    """
+    proxmoxmanager = ProxmoxManager(host="0.0.0.0", user="root@pam", token_name="name", token_value="secret")
 
-    def test_get_users(self):
-        p = FooProxmoxManager("foo", "bar", "bat", "baz")
-        self.assertEqual(p.list_users(), FooAPIWrapper.get_users(), "Method is supposed to return raw data")
-
-    def test_get_user(self):
-        p = FooProxmoxManager("foo", "bar", "bat", "baz")
-        self.assertEqual(p.get_user("1"), FooAPIWrapper.get_user("1"), "Method is supposed to return raw data")
-        self.assertEqual(p.get_user("2"), FooAPIWrapper.get_user("2"), "Method is supposed to return raw data")
-        self.assertIsNone(p.get_user("3"), "Method should return None for nonexistent users")
+    def test_list_users(self):
+        with patch.object(APIWrapper, "list_users", return_value=["user1", "user2"]):
+            self.assertEqual(self.proxmoxmanager.list_users(), ["user1", "user2"])
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
