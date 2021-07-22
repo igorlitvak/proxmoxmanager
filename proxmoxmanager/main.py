@@ -1,4 +1,6 @@
 from proxmoxer import ProxmoxAPI
+import re
+import logging
 
 
 class ProxmoxManager:
@@ -8,6 +10,7 @@ class ProxmoxManager:
 
     def __init__(self, host: str, user: str, token_name: str, token_value: str):
         self._api = APIWrapper(host=host, user=user, token_name=token_name, token_value=token_value)
+        self._logger = logging.getLogger("proxmoxmanager_logger")
 
     def list_users(self) -> list:
         """
@@ -19,22 +22,26 @@ class ProxmoxManager:
     def get_user(self, userid: str) -> dict:
         """
         Get specific user by id
-        :param userid
+        :param userid: Username in username@pve or username@pam format
         :return: User info in JSON-like format
         """
-        # TODO: append @pve to username if it doesn't have realm
+        # PVE = Proxmox VE auth
+        # PAM = Debian auth (can't be created via API)
+        if not (re.match(r"^\w+@pve$", userid) or re.match(r"^\w+@pam$", userid)):
+            self._logger.warning(f"Username {userid} doesn't specify realm - \"@pve\" will be appended to username")
+            userid = userid + "@pve"
         return self._api.get_user(userid=userid)
 
     def create_user(self, userid: str, password: str, **kwargs) -> None:
         """
         Create new user
-        :param userid
-        :param password
+        :param userid: Username if username@pve format
+        :param password: Password at least 5 characters long
         :param kwargs: Other arguments passed to Proxmox API
         :return: None
         """
-        # TODO: check that username looks like username@pve
-        # TODO: ckeck that password is 5+ characters long
+        if not re.match(r"^\w+@pve$", userid):
+            userid = userid + "@pve"
         return self._api.create_user(userid=userid, password=password, **kwargs)
 
     def list_nodes(self) -> list:

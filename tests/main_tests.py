@@ -7,28 +7,50 @@ class TestProxmoxManager(unittest.TestCase):
     proxmoxmanager = ProxmoxManager(host="0.0.0.0", user="root@pam", token_name="name", token_value="secret")
 
     def test_list_users(self):
-        return_value = [{"userid": "user1", "enable": "1"}, {"userid": "user2", "enable": "0"}]
+        return_value = [{"userid": "user1@pve", "enable": "1"}, {"userid": "user2@pam", "enable": "0"}]
         with patch.object(APIWrapper, "list_users", return_value=return_value) as target_method:
             self.assertEqual(self.proxmoxmanager.list_users(), return_value)
             target_method.assert_called_once_with()
 
     def test_get_user(self):
-        return_value = {"userid": "user1", "enabled": "1"}
+        return_value = {"userid": "user1@pve", "enabled": "1"}
         with patch.object(APIWrapper, "get_user", return_value=return_value) as target_method:
+            self.assertEqual(self.proxmoxmanager.get_user(userid="user1@pve"), return_value)
+            target_method.assert_called_once_with(userid="user1@pve")
+
+    def test_get_user_without_realm(self):
+        return_value = {"userid": "user1@pve", "enabled": "1"}
+        with patch.object(APIWrapper, "get_user", return_value=return_value) as target_method, self.assertLogs(
+                self.proxmoxmanager._logger) as logs:
             self.assertEqual(self.proxmoxmanager.get_user(userid="user1"), return_value)
-            target_method.assert_called_once_with(userid="user1")
+            target_method.assert_called_once_with(userid="user1@pve")
+            self.assertEqual(len(logs.records), 1)
+            self.assertEqual(logs.records[0].getMessage(),
+                             "Username user1 doesn't specify realm - \"@pve\" will be appended to username")
+
+    def test_create_user(self):
+        return_value = None
+        with patch.object(APIWrapper, "create_user", return_value=return_value) as target_method:
+            self.assertEqual(self.proxmoxmanager.create_user(userid="user1@pve", password="12345"), return_value)
+            target_method.assert_called_once_with(userid="user1@pve", password="12345")
+
+    def test_create_user_without_realm(self):
+        return_value = None
+        with patch.object(APIWrapper, "create_user", return_value=return_value) as target_method:
+            self.assertEqual(self.proxmoxmanager.create_user(userid="user1", password="12345"), return_value)
+            target_method.assert_called_once_with(userid="user1@pve", password="12345")
 
     def test_list_resources_without_type(self):
-        return_value = [{"vmid": "100", "type": "qemu"}, {"vmid": "101", "type": "lxc"}]
+        return_value = [{"id": "qemu/100", "type": "vm"}, {"id": "node/pve", "type": "node"}]
         with patch.object(APIWrapper, "list_resources", return_value=return_value) as target_method:
             self.assertEqual(self.proxmoxmanager.list_resources(), return_value)
             target_method.assert_called_once_with()
 
     def test_list_resources_with_type(self):
-        return_value = [{"vmid": "100", "type": "qemu"}]
+        return_value = [{"id": "qemu/100", "type": "vm"}]
         with patch.object(APIWrapper, "list_resources", return_value=return_value) as target_method:
-            self.assertEqual(self.proxmoxmanager.list_resources(resource_type="qemu"), return_value)
-            target_method.assert_called_once_with(type="qemu")
+            self.assertEqual(self.proxmoxmanager.list_resources(resource_type="vm"), return_value)
+            target_method.assert_called_once_with(type="vm")
 
     def test_list_vms(self):
         return_value = [{"vmid": "100", "name": "foo"}, {"vmid": "101", "name": "bar"}]
