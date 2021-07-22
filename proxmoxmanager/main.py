@@ -49,7 +49,6 @@ class ProxmoxManager:
         List all nodes
         :return: List of nodes in JSON-like format
         """
-        # TODO: add tests
         return self._api.list_nodes()
 
     def get_node_status(self, node: str) -> dict:
@@ -58,7 +57,6 @@ class ProxmoxManager:
         :param node
         :return: Node info in JSON-like format
         """
-        # TODO: add tests
         return self._api.get_node_status(node=node)
 
     def list_resources(self, resource_type: str = None) -> list:
