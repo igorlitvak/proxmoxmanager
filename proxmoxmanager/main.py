@@ -294,17 +294,18 @@ class ProxmoxManager:
     def suspend_container(self, node: str, vmid: str) -> str:
         """
         Suspend container
+        WARNING: doesn't appear in Proxmox GUI and probably never works
         :param node
         :param vmid
         :return: ID of task
         """
-        # TODO: doesn't seem to work
         kwargs = {"node": node, "vmid": vmid}
         return self._api.suspend_container(**kwargs)
 
     def resume_container(self, node: str, vmid: str) -> str:
         """
         Resume container
+        WARNING: doesn't appear in Proxmox GUI and probably never works
         :param node
         :param vmid
         :return: ID of task
