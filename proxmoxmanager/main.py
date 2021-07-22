@@ -22,6 +22,7 @@ class ProxmoxManager:
         :param userid
         :return: User info in JSON-like format
         """
+        # TODO: append @pve to username if it doesn't have realm
         return self._api.get_user(userid=userid)
 
     def create_user(self, userid: str, password: str, **kwargs) -> None:
@@ -32,7 +33,7 @@ class ProxmoxManager:
         :param kwargs: Other arguments passed to Proxmox API
         :return: None
         """
-        # TODO: check that username looks like username@pam
+        # TODO: check that username looks like username@pve
         # TODO: ckeck that password is 5+ characters long
         return self._api.create_user(userid=userid, password=password, **kwargs)
 
@@ -49,12 +50,13 @@ class ProxmoxManager:
         :param node
         :return: Node info in JSON-like format
         """
+        # FIXME: change API endpoint or delete method
         return self._api.get_node(node=node)
 
     def list_resources(self, resource_type: str = None) -> list:
         """
         List all resources
-        :param resource_type: node | storage | pool | qemu | lxc | openvz | sdn (optional)
+        :param resource_type: node | storage | vm | sdn (optional)
         :return: List of resources in JSON-like format
         """
         kwargs = {}
@@ -194,7 +196,7 @@ class ProxmoxManager:
 
     def reset_vm(self, node: str, vmid: str) -> str:
         """
-        Reset virtual machine
+        Reset virtual machine (unsafely)
         :param node
         :param vmid
         :return: ID of task
@@ -204,7 +206,7 @@ class ProxmoxManager:
 
     def reboot_vm(self, node: str, vmid: str, timeout: int = None) -> str:
         """
-        Reboot virtual machine
+        Reboot virtual machine (safely)
         :param node
         :param vmid
         :param timeout: Number of seconds to wait (optional)
@@ -272,7 +274,7 @@ class ProxmoxManager:
 
     def reboot_container(self, node: str, vmid: str, timeout: int = None) -> str:
         """
-        Reboot container
+        Reboot container (safely)
         :param node
         :param vmid
         :param timeout: Number of seconds to wait (optional)
@@ -290,6 +292,7 @@ class ProxmoxManager:
         :param vmid
         :return: ID of task
         """
+        # TODO: doesn't seem to work
         kwargs = {"node": node, "vmid": vmid}
         return self._api.suspend_container(**kwargs)
 
