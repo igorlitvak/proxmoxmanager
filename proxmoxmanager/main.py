@@ -49,16 +49,17 @@ class ProxmoxManager:
         List all nodes
         :return: List of nodes in JSON-like format
         """
+        # TODO: add tests
         return self._api.list_nodes()
 
-    def get_node(self, node: str) -> dict:
+    def get_node_status(self, node: str) -> dict:
         """
         Get specific node by id
         :param node
         :return: Node info in JSON-like format
         """
-        # FIXME: change API endpoint or delete method
-        return self._api.get_node(node=node)
+        # TODO: add tests
+        return self._api.get_node_status(node=node)
 
     def list_resources(self, resource_type: str = None) -> list:
         """
@@ -364,8 +365,8 @@ class APIWrapper:
     def list_nodes(self):
         return self._proxmoxer.nodes.get()
 
-    def get_node(self, node: str, **kwargs):
-        return self._proxmoxer.nodes(node).get(**kwargs)
+    def get_node_status(self, node: str, **kwargs):
+        return self._proxmoxer.nodes(node).status.get(**kwargs)
 
     def list_resources(self, **kwargs):
         return self._proxmoxer.cluster.resources.get(**kwargs)

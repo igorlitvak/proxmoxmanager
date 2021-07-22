@@ -13,13 +13,13 @@ class TestProxmoxManager(unittest.TestCase):
             target_method.assert_called_once_with()
 
     def test_get_user(self):
-        return_value = {"userid": "user1@pve", "enabled": "1"}
+        return_value = {"userid": "user1@pve", "enable": "1"}
         with patch.object(APIWrapper, "get_user", return_value=return_value) as target_method:
             self.assertEqual(self.proxmoxmanager.get_user(userid="user1@pve"), return_value)
             target_method.assert_called_once_with(userid="user1@pve")
 
     def test_get_user_without_realm(self):
-        return_value = {"userid": "user1@pve", "enabled": "1"}
+        return_value = {"userid": "user1@pve", "enable": "1"}
         with patch.object(APIWrapper, "get_user", return_value=return_value) as target_method, self.assertLogs(
                 self.proxmoxmanager._logger) as logs:
             self.assertEqual(self.proxmoxmanager.get_user(userid="user1"), return_value)
@@ -39,6 +39,18 @@ class TestProxmoxManager(unittest.TestCase):
         with patch.object(APIWrapper, "create_user", return_value=return_value) as target_method:
             self.assertEqual(self.proxmoxmanager.create_user(userid="user1", password="12345"), return_value)
             target_method.assert_called_once_with(userid="user1@pve", password="12345")
+
+    def test_list_nodes(self):
+        return_value = [{"node": "node1", "status": "online"}, {"node": "node2", "status": "online"}]
+        with patch.object(APIWrapper, "list_nodes", return_value=return_value) as target_method:
+            self.assertEqual(self.proxmoxmanager.list_nodes(), return_value)
+            target_method.assert_called_once_with()
+
+    def test_get_node_status(self):
+        return_value = {"uptime": 1000, "cores": 4}
+        with patch.object(APIWrapper, "get_node_status", return_value=return_value) as target_method:
+            self.assertEqual(self.proxmoxmanager.get_node_status(node="node1"), return_value)
+            target_method.assert_called_once_with(node="node1")
 
     def test_list_resources_without_type(self):
         return_value = [{"id": "qemu/100", "type": "vm"}, {"id": "node/pve", "type": "node"}]
