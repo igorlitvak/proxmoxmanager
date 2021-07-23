@@ -5,6 +5,7 @@ from unittest.mock import patch
 
 class TestProxmoxManager(unittest.TestCase):
     proxmoxmanager = ProxmoxManager(host="0.0.0.0:8006", user="root@pam", token_name="name", token_value="secret")
+    proxmoxmanager._logger.setLevel("CRITICAL")  # Hide logs from console without disabling them
 
     def test_list_users(self):
         return_value = [{"userid": "user1@pve", "enable": "1"}, {"userid": "user2@pam", "enable": "0"}]
@@ -96,7 +97,8 @@ class TestProxmoxManager(unittest.TestCase):
         with patch("proxmoxmanager.main.ProxmoxAPI") as PatchClass:
             PatchClass.return_value.get_tokens.return_value = return_value
             self.assertEqual(self.proxmoxmanager.get_user_tokens(userid="user1@pve", password="12345"), return_value)
-            PatchClass.assert_called_once_with(host="0.0.0.0:8006", user="user1@pve", password="12345", verify_ssl=False)
+            PatchClass.assert_called_once_with(host="0.0.0.0:8006", user="user1@pve", password="12345",
+                                               verify_ssl=False)
             PatchClass().get_tokens.assert_called_once_with()
 
     def test_get_user_tokens_without_realm(self):
