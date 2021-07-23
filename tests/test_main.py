@@ -36,6 +36,61 @@ class TestProxmoxManager(unittest.TestCase):
             self.assertEqual(self.proxmoxmanager.create_user(userid="user1", password="12345"), return_value)
             target_method.assert_called_once_with(userid="user1@pve", password="12345")
 
+    def test_list_roles(self):
+        return_value = [{"roleid": "PVETemplateUser", "privs": "VM.Audit,VM.Clone"},
+                        {"roleid": "NoAccess", "privs": ""}]
+        with patch.object(APIWrapper, "list_roles", return_value=return_value) as target_method:
+            self.assertEqual(self.proxmoxmanager.list_roles(), return_value)
+            target_method.assert_called_once_with()
+
+    def test_get_permissions_for_user(self):
+        return_value = {"/vms/100": {"NoAccess": 1}, "/vms/101": {"PVETemplateUser": 1}}
+        with patch.object(APIWrapper, "list_permissions", return_value=return_value) as target_method:
+            self.assertEqual(self.proxmoxmanager.get_permissions_for_user(userid="user1@pve"), return_value)
+            target_method.assert_called_once_with(userid="user1@pve")
+
+    def test_get_permissions_for_user_without_realm(self):
+        return_value = {"/vms/100": {"NoAccess": 1}, "/vms/101": {"PVETemplateUser": 1}}
+        with patch.object(APIWrapper, "list_permissions", return_value=return_value) as target_method:
+            self.assertEqual(self.proxmoxmanager.get_permissions_for_user(userid="user1"), return_value)
+            target_method.assert_called_once_with(userid="user1@pve")
+
+    def test_give_permission_to_user(self):
+        return_value = None
+        with patch.object(APIWrapper, "update_access_control_list", return_value=return_value) as target_method:
+            self.assertEqual(
+                self.proxmoxmanager.give_permission_to_user(userid="user1@pve", role="SomeRole", path="/vms/100"),
+                return_value)
+            target_method.assert_called_once_with(users="user1@pve", roles="SomeRole", path="/vms/100", delete="0",
+                                                  propagate="0")
+
+    def test_give_permission_to_user_without_realm(self):
+        return_value = None
+        with patch.object(APIWrapper, "update_access_control_list", return_value=return_value) as target_method:
+            self.assertEqual(
+                self.proxmoxmanager.give_permission_to_user(userid="user1", role="SomeRole", path="/vms/100"),
+                return_value)
+            target_method.assert_called_once_with(users="user1@pve", roles="SomeRole", path="/vms/100", delete="0",
+                                                  propagate="0")
+
+    def test_remove_permission_from_user(self):
+        return_value = None
+        with patch.object(APIWrapper, "update_access_control_list", return_value=return_value) as target_method:
+            self.assertEqual(
+                self.proxmoxmanager.remove_permission_from_user(userid="user1@pve", role="SomeRole", path="/vms/100"),
+                return_value)
+            target_method.assert_called_once_with(users="user1@pve", roles="SomeRole", path="/vms/100", delete="1",
+                                                  propagate="0")
+
+    def test_remove_permission_from_user_without_realm(self):
+        return_value = None
+        with patch.object(APIWrapper, "update_access_control_list", return_value=return_value) as target_method:
+            self.assertEqual(
+                self.proxmoxmanager.remove_permission_from_user(userid="user1", role="SomeRole", path="/vms/100"),
+                return_value)
+            target_method.assert_called_once_with(users="user1@pve", roles="SomeRole", path="/vms/100", delete="1",
+                                                  propagate="0")
+
     def test_list_nodes(self):
         return_value = [{"node": "node1", "status": "online"}, {"node": "node2", "status": "online"}]
         with patch.object(APIWrapper, "list_nodes", return_value=return_value) as target_method:
