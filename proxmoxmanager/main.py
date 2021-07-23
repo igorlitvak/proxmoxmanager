@@ -46,7 +46,6 @@ class ProxmoxManager:
         List all availible roles on server
         :return: List of roles in JSON-like format
         """
-        # TODO: add tests
         return self._api.list_roles()
 
     def get_permissions_for_user(self, userid: str) -> dict:
@@ -55,7 +54,6 @@ class ProxmoxManager:
         :param userid: Username in username@pve or username@pam format
         :return: User permissions in JSON-like format
         """
-        # TODO: add tests
         userid = self._append_pve_to_userid(userid)
         return self._api.list_permissions(userid=userid)
 
@@ -68,7 +66,6 @@ class ProxmoxManager:
         :param propagate: Whether to inherit permissions (optional, default=False)
         :return: None
         """
-        # TODO: add tests
         userid = self._append_pve_to_userid(userid)
         return self._api.update_access_control_list(path=path, roles=role, users=userid, delete="0",
                                                     propagate='1' if propagate else '0')
@@ -82,7 +79,6 @@ class ProxmoxManager:
         :param propagate: Whether to inherit permissions (optional, default=False)
         :return: None
         """
-        # TODO: add tests
         userid = self._append_pve_to_userid(userid)
         return self._api.update_access_control_list(path=path, roles=role, users=userid, delete="1",
                                                     propagate='1' if propagate else '0')
