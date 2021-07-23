@@ -10,6 +10,7 @@ class ProxmoxManager:
     """
 
     def __init__(self, host: str, user: str, token_name: str, token_value: str):
+        self._host = host
         self._api = APIWrapper(host=host, user=user, token_name=token_name, token_value=token_value)
         self._logger = logging.getLogger("proxmoxmanager_logger")
 
@@ -84,8 +85,15 @@ class ProxmoxManager:
                                                     propagate='1' if propagate else '0')
 
     def get_user_tokens(self, userid: str, password: str) -> Tuple[str, str]:
-        # TODO: write method
-        raise NotImplementedError
+        """
+        :param userid: Username in username@pve or username@pam format
+        :param password
+        :return: Tuple consisting of the authentication and CSRF tokens
+        """
+        # TODO: add tests
+        userid = self._append_pve_to_userid(userid)
+        tmp_api = ProxmoxAPI(host=self._host, user=userid, password=password, verify_ssl=False)
+        return tmp_api.get_tokens()
 
     def list_nodes(self) -> list:
         """
