@@ -90,7 +90,6 @@ class ProxmoxManager:
         :param password
         :return: Tuple consisting of the authentication and CSRF tokens
         """
-        # TODO: add tests
         userid = self._append_pve_to_userid(userid)
         tmp_api = ProxmoxAPI(host=self._host, user=userid, password=password, verify_ssl=False)
         return tmp_api.get_tokens()
