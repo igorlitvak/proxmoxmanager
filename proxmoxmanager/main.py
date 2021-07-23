@@ -1,6 +1,7 @@
 from proxmoxer import ProxmoxAPI
 import re
 import logging
+from typing import Tuple
 
 
 class ProxmoxManager:
@@ -25,17 +26,13 @@ class ProxmoxManager:
         :param userid: Username in username@pve or username@pam format
         :return: User info in JSON-like format
         """
-        # PVE = Proxmox VE auth
-        # PAM = Debian auth (can't be created via API)
-        if not (re.match(r"^\w+@pve$", userid) or re.match(r"^\w+@pam$", userid)):
-            self._logger.warning(f"Username {userid} doesn't specify realm - \"@pve\" will be appended to username")
-            userid = userid + "@pve"
+        userid = self._append_pve_to_userid(userid)
         return self._api.get_user(userid=userid)
 
     def create_user(self, userid: str, password: str, **kwargs) -> None:
         """
         Create new user
-        :param userid: Username if username@pve format
+        :param userid: Username in username@pve format
         :param password: Password at least 5 characters long
         :param kwargs: Other arguments passed to Proxmox API
         :return: None
@@ -43,6 +40,56 @@ class ProxmoxManager:
         if not re.match(r"^\w+@pve$", userid):
             userid = userid + "@pve"
         return self._api.create_user(userid=userid, password=password, **kwargs)
+
+    def list_roles(self) -> list:
+        """
+        List all availible roles on server
+        :return: List of roles in JSON-like format
+        """
+        # TODO: add tests
+        return self._api.list_roles()
+
+    def get_permissions_for_user(self, userid: str) -> dict:
+        """
+        List permissions that given user has
+        :param userid: Username in username@pve or username@pam format
+        :return: User permissions in JSON-like format
+        """
+        # TODO: add tests
+        userid = self._append_pve_to_userid(userid)
+        return self._api.list_permissions(userid=userid)
+
+    def give_permission_to_user(self, userid: str, role: str, path: str, propagate: bool = False) -> None:
+        """
+        Give user permission for given path with given role
+        :param userid: Username in username@pve or username@pam format
+        :param role: Name of role to be added
+        :param path: Path to which permission will be applied, for example /vms/100
+        :param propagate: Whether to inherit permissions (optional, default=False)
+        :return: None
+        """
+        # TODO: add tests
+        userid = self._append_pve_to_userid(userid)
+        return self._api.update_access_control_list(path=path, roles=role, users=userid, delete="0",
+                                                    propagate='1' if propagate else '0')
+
+    def remove_permission_from_user(self, userid: str, role: str, path: str, propagate: bool = False) -> None:
+        """
+        Remove user permission from given path with given role
+        :param userid: Username in username@pve or username@pam format
+        :param role: Name of role to be removed
+        :param path: Path to which permission will be applied, for example /vms/100
+        :param propagate: Whether to inherit permissions (optional, default=False)
+        :return: None
+        """
+        # TODO: add tests
+        userid = self._append_pve_to_userid(userid)
+        return self._api.update_access_control_list(path=path, roles=role, users=userid, delete="1",
+                                                    propagate='1' if propagate else '0')
+
+    def get_user_tokens(self, userid: str, password: str) -> Tuple[str, str]:
+        # TODO: write method
+        raise NotImplementedError
 
     def list_nodes(self) -> list:
         """
@@ -339,6 +386,17 @@ class ProxmoxManager:
         """
         return self._api.get_task_status(node=node, upid=upid)
 
+    def _append_pve_to_userid(self, userid: str):
+        """
+        Internal method that appends "@pve" to userid if no realm was specified
+        :param userid
+        :return: userid with realm
+        """
+        if not (re.match(r"^\w+@pve$", userid) or re.match(r"^\w+@pam$", userid)):
+            self._logger.warning(f"Username {userid} doesn't specify realm - \"@pve\" will be appended to username")
+            userid = userid + "@pve"
+        return userid
+
 
 class APIWrapper:
     """
@@ -349,8 +407,8 @@ class APIWrapper:
         self._proxmoxer = ProxmoxAPI(host=host, user=user, token_name=token_name, token_value=token_value,
                                      verify_ssl=False)
 
-    def get_version(self):
-        return self._proxmoxer.version.get()
+    def get_version(self, **kwargs):
+        return self._proxmoxer.version.get(**kwargs)
 
     def list_users(self, **kwargs):
         return self._proxmoxer.access.users.get(**kwargs)
@@ -361,8 +419,20 @@ class APIWrapper:
     def create_user(self, userid: str, password: str, **kwargs):
         return self._proxmoxer.access.users.post(userid=userid, password=password, **kwargs)
 
-    def list_nodes(self):
-        return self._proxmoxer.nodes.get()
+    def list_roles(self, **kwargs):
+        return self._proxmoxer.access.roles.get(**kwargs)
+
+    def list_permissions(self, **kwargs):
+        return self._proxmoxer.access.permissions.get(**kwargs)
+
+    def get_access_control_list(self, **kwargs):
+        return self._proxmoxer.access.acl.put(**kwargs)
+
+    def update_access_control_list(self, path: str, roles: str, **kwargs):
+        return self._proxmoxer.access.acl.put(path=path, roles=roles, **kwargs)
+
+    def list_nodes(self, **kwargs):
+        return self._proxmoxer.nodes.get(**kwargs)
 
     def get_node_status(self, node: str, **kwargs):
         return self._proxmoxer.nodes(node).status.get(**kwargs)

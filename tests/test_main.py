@@ -20,13 +20,9 @@ class TestProxmoxManager(unittest.TestCase):
 
     def test_get_user_without_realm(self):
         return_value = {"userid": "user1@pve", "enable": "1"}
-        with patch.object(APIWrapper, "get_user", return_value=return_value) as target_method, self.assertLogs(
-                self.proxmoxmanager._logger) as logs:
+        with patch.object(APIWrapper, "get_user", return_value=return_value) as target_method:
             self.assertEqual(self.proxmoxmanager.get_user(userid="user1"), return_value)
             target_method.assert_called_once_with(userid="user1@pve")
-            self.assertEqual(len(logs.records), 1)
-            self.assertEqual(logs.records[0].getMessage(),
-                             "Username user1 doesn't specify realm - \"@pve\" will be appended to username")
 
     def test_create_user(self):
         return_value = None
@@ -211,6 +207,20 @@ class TestProxmoxManager(unittest.TestCase):
         with patch.object(APIWrapper, "get_task_status", return_value=return_value) as target_method:
             self.assertEqual(self.proxmoxmanager.get_task_status(node="node1", upid="100"), return_value)
             target_method.assert_called_once_with(node="node1", upid="100")
+
+    def test_append_pve_to_userid(self):
+        with self.assertLogs(self.proxmoxmanager._logger) as logs:
+            self.assertEqual(self.proxmoxmanager._append_pve_to_userid("user1"), "user1@pve")
+            self.assertEqual(len(logs.records), 1)
+            self.assertEqual(logs.records[0].getMessage(),
+                             "Username user1 doesn't specify realm - \"@pve\" will be appended to username")
+        with self.assertLogs(self.proxmoxmanager._logger) as logs:
+            self.assertEqual(self.proxmoxmanager._append_pve_to_userid("user2@invalid"), "user2@invalid@pve")
+            self.assertEqual(len(logs.records), 1)
+            self.assertEqual(logs.records[0].getMessage(),
+                             "Username user2@invalid doesn't specify realm - \"@pve\" will be appended to username")
+        self.assertEqual(self.proxmoxmanager._append_pve_to_userid("user3@pve"), "user3@pve")
+        self.assertEqual(self.proxmoxmanager._append_pve_to_userid("user4@pam"), "user4@pam")
 
 
 if __name__ == "__main__":
