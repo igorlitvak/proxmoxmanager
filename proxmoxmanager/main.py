@@ -2,7 +2,7 @@ from proxmoxer import ProxmoxAPI
 import re
 import logging
 from typing import Tuple
-from proxmoxmanager.utils import APIWrapper
+from proxmoxmanager.utils import *
 
 
 class ProxmoxManager:
@@ -28,6 +28,7 @@ class SimpleProxmoxManager:
         List all users
         :return: List of users in JSON-like format
         """
+        # TODO
         return self._api.list_users()
 
     def get_user(self, userid: str) -> dict:
@@ -36,6 +37,7 @@ class SimpleProxmoxManager:
         :param userid: Username in username@pve or username@pam format
         :return: User info in JSON-like format
         """
+        # TODO
         userid = self._append_pve_to_userid(userid)
         return self._api.get_user(userid=userid)
 
@@ -47,6 +49,7 @@ class SimpleProxmoxManager:
         :param kwargs: Other arguments passed to Proxmox API
         :return: None
         """
+        # TODO
         if not re.match(r"^\w+@pve$", userid):
             userid = userid + "@pve"
         return self._api.create_user(userid=userid, password=password, **kwargs)
@@ -56,6 +59,7 @@ class SimpleProxmoxManager:
         List all availible roles on server
         :return: List of roles in JSON-like format
         """
+        # TODO
         return self._api.list_roles()
 
     def get_permissions_for_user(self, userid: str) -> dict:
@@ -64,6 +68,7 @@ class SimpleProxmoxManager:
         :param userid: Username in username@pve or username@pam format
         :return: User permissions in JSON-like format
         """
+        # TODO
         userid = self._append_pve_to_userid(userid)
         return self._api.list_permissions(userid=userid)
 
@@ -76,6 +81,7 @@ class SimpleProxmoxManager:
         :param propagate: Whether to inherit permissions (optional, default=False)
         :return: None
         """
+        # TODO
         userid = self._append_pve_to_userid(userid)
         return self._api.update_access_control_list(path=path, roles=role, users=userid, delete="0",
                                                     propagate='1' if propagate else '0')
@@ -89,6 +95,7 @@ class SimpleProxmoxManager:
         :param propagate: Whether to inherit permissions (optional, default=False)
         :return: None
         """
+        # TODO
         userid = self._append_pve_to_userid(userid)
         return self._api.update_access_control_list(path=path, roles=role, users=userid, delete="1",
                                                     propagate='1' if propagate else '0')
@@ -99,6 +106,7 @@ class SimpleProxmoxManager:
         :param password
         :return: Tuple consisting of the authentication and CSRF tokens
         """
+        # TODO
         userid = self._append_pve_to_userid(userid)
         tmp_api = ProxmoxAPI(host=self._host, user=userid, password=password, verify_ssl=False)
         return tmp_api.get_tokens()
@@ -108,6 +116,7 @@ class SimpleProxmoxManager:
         List all nodes
         :return: List of nodes in JSON-like format
         """
+        # TODO
         return self._api.list_nodes()
 
     def get_node_status(self, node: str) -> dict:
@@ -116,6 +125,7 @@ class SimpleProxmoxManager:
         :param node
         :return: Node info in JSON-like format
         """
+        # TODO
         return self._api.get_node_status(node=node)
 
     def list_resources(self, resource_type: str = None) -> list:
@@ -124,6 +134,7 @@ class SimpleProxmoxManager:
         :param resource_type: node | storage | vm | sdn (optional)
         :return: List of resources in JSON-like format
         """
+        # TODO
         kwargs = {}
         if resource_type is not None:
             kwargs["type"] = resource_type
@@ -135,6 +146,7 @@ class SimpleProxmoxManager:
         :param node
         :return: List of vitrual machines in JSON-like format
         """
+        # TODO
         return self._api.list_vms(node=node)
 
     def get_vm_status(self, node: str, vmid: str) -> dict:
@@ -144,6 +156,7 @@ class SimpleProxmoxManager:
         :param vmid
         :return: Virtual machine info in JSON-like format
         """
+        # TODO
         return self._api.get_vm_status(node=node, vmid=vmid)
 
     def delete_vm(self, node: str, vmid: str) -> str:
@@ -153,6 +166,7 @@ class SimpleProxmoxManager:
         :param vmid
         :return: ID of deleting task
         """
+        # TODO
         return self._api.delete_vm(node=node, vmid=vmid)
 
     def clone_vm(self, newid: str, node: str, vmid: str, name: str = None, full: bool = True,
@@ -167,6 +181,7 @@ class SimpleProxmoxManager:
         :param target: New node ID (optional)
         :return: ID of cloning task
         """
+        # TODO
         kwargs = {"newid": newid, "node": node, "vmid": vmid, "full": '1' if full else '0'}
         if name is not None:
             kwargs["name"] = name
@@ -180,6 +195,7 @@ class SimpleProxmoxManager:
         :param node
         :return: List of containers in JSON-like format
         """
+        # TODO
         return self._api.list_containers(node=node)
 
     def get_container_status(self, node: str, vmid: str) -> dict:
@@ -189,6 +205,7 @@ class SimpleProxmoxManager:
         :param vmid
         :return: Container info in JSON-like format
         """
+        # TODO
         return self._api.get_container_status(node=node, vmid=vmid)
 
     def delete_container(self, node: str, vmid: str) -> str:
@@ -198,6 +215,7 @@ class SimpleProxmoxManager:
         :param vmid
         :return: ID of deleting task
         """
+        # TODO
         return self._api.delete_container(node=node, vmid=vmid)
 
     def clone_container(self, newid: str, node: str, vmid: str, hostname: str = None, full: bool = True,
@@ -212,6 +230,7 @@ class SimpleProxmoxManager:
         :param target: New node ID (optional)
         :return: ID of cloning task
         """
+        # TODO
         kwargs = {"newid": newid, "node": node, "vmid": vmid, "full": '1' if full else '0'}
         if hostname is not None:
             kwargs["hostname"] = hostname
@@ -227,6 +246,7 @@ class SimpleProxmoxManager:
         :param timeout: Number of seconds to wait (optional)
         :return: ID of task
         """
+        # TODO
         kwargs = {"node": node, "vmid": vmid}
         if timeout is not None:
             kwargs["timeout"] = str(timeout)
@@ -240,6 +260,7 @@ class SimpleProxmoxManager:
         :param timeout: Number of seconds to wait (optional)
         :return: ID of task
         """
+        # TODO
         kwargs = {"node": node, "vmid": vmid}
         if timeout is not None:
             kwargs["timeout"] = str(timeout)
@@ -254,6 +275,7 @@ class SimpleProxmoxManager:
         :param force_stop: Whether to stop a VM if shutdown failed (optional, default=True)
         :return: ID of task
         """
+        # TODO
         kwargs = {"node": node, "vmid": vmid, "forceStop": '1' if force_stop else '0'}
         if timeout is not None:
             kwargs["timeout"] = str(timeout)
@@ -266,6 +288,7 @@ class SimpleProxmoxManager:
         :param vmid
         :return: ID of task
         """
+        # TODO
         kwargs = {"node": node, "vmid": vmid}
         return self._api.reset_vm(**kwargs)
 
@@ -277,6 +300,7 @@ class SimpleProxmoxManager:
         :param timeout: Number of seconds to wait (optional)
         :return: ID of task
         """
+        # TODO
         kwargs = {"node": node, "vmid": vmid}
         if timeout is not None:
             kwargs["timeout"] = str(timeout)
@@ -290,6 +314,7 @@ class SimpleProxmoxManager:
         :param to_disk: Whether to suspend VM to disk (optional, defaul=False)
         :return: ID of task
         """
+        # TODO
         kwargs = {"node": node, "vmid": vmid, "todisk": '1' if to_disk else '0'}
         return self._api.suspend_vm(**kwargs)
 
@@ -300,6 +325,7 @@ class SimpleProxmoxManager:
         :param vmid
         :return: ID of task
         """
+        # TODO
         kwargs = {"node": node, "vmid": vmid}
         return self._api.resume_vm(**kwargs)
 
@@ -310,6 +336,7 @@ class SimpleProxmoxManager:
         :param vmid
         :return: ID of task
         """
+        # TODO
         kwargs = {"node": node, "vmid": vmid}
         return self._api.start_container(**kwargs)
 
@@ -320,6 +347,7 @@ class SimpleProxmoxManager:
         :param vmid
         :return: ID of task
         """
+        # TODO
         kwargs = {"node": node, "vmid": vmid}
         return self._api.stop_container(**kwargs)
 
@@ -332,6 +360,7 @@ class SimpleProxmoxManager:
         :param force_stop: Whether to stop a container if shutdown failed (optional, default=True)
         :return: ID of task
         """
+        # TODO
         kwargs = {"node": node, "vmid": vmid, "forceStop": '1' if force_stop else '0'}
         if timeout is not None:
             kwargs["timeout"] = str(timeout)
@@ -345,6 +374,7 @@ class SimpleProxmoxManager:
         :param timeout: Number of seconds to wait (optional)
         :return: ID of task
         """
+        # TODO
         kwargs = {"node": node, "vmid": vmid}
         if timeout is not None:
             kwargs["timeout"] = str(timeout)
@@ -358,6 +388,7 @@ class SimpleProxmoxManager:
         :param vmid
         :return: ID of task
         """
+        # TODO
         kwargs = {"node": node, "vmid": vmid}
         return self._api.suspend_container(**kwargs)
 
@@ -369,6 +400,7 @@ class SimpleProxmoxManager:
         :param vmid
         :return: ID of task
         """
+        # TODO
         kwargs = {"node": node, "vmid": vmid}
         return self._api.resume_container(**kwargs)
 
@@ -378,6 +410,7 @@ class SimpleProxmoxManager:
         :param node
         :return: List of tasks in JSON-like format
         """
+        # TODO
         return self._api.list_tasks(node=node)
 
     def get_task_logs(self, node: str, upid: str) -> list:
@@ -387,6 +420,7 @@ class SimpleProxmoxManager:
         :param upid
         :return: List of tasks in JSON-like format
         """
+        # TODO
         return self._api.get_task_logs(node=node, upid=upid)
 
     def get_task_status(self, node: str, upid: str) -> dict:
@@ -394,8 +428,9 @@ class SimpleProxmoxManager:
         Get status of specific task
         :param node
         :param upid
-        :return: Task status in JSOB-like format
+        :return: Task status in JSON-like format
         """
+        # TODO
         return self._api.get_task_status(node=node, upid=upid)
 
     def _append_pve_to_userid(self, userid: str):
