@@ -1,5 +1,5 @@
 from proxmoxmanager.main import SimpleProxmoxManager
-from proxmoxmanager.utils.api import APIWrapper
+from proxmoxmanager.utils import APIWrapper
 import unittest
 from unittest.mock import patch
 

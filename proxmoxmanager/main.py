@@ -2,8 +2,7 @@ from proxmoxer import ProxmoxAPI
 import re
 import logging
 from typing import Tuple
-
-from proxmoxmanager.utils.api import APIWrapper
+from proxmoxmanager.utils import APIWrapper
 
 
 class ProxmoxManager:
