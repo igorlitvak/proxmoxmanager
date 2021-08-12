@@ -1,6 +1,7 @@
 from .api import APIWrapper
-from typing import Dict, List
+from typing import Dict, List, Tuple
 from random import choice
+from proxmoxer import ProxmoxAPI
 
 
 class ProxmoxException(Exception):
@@ -64,7 +65,18 @@ class ProxmoxUser:
 
     @property
     def id(self) -> str:
+        """
+        :return: Unique ID of user (get-only)
+        """
         return self._userid
+
+    def get_user_tokens(self, password: str) -> Tuple[str, str]:
+        """
+        :param password
+        :return: Tuple consisting of the authentication and CSRF tokens
+        """
+        tmp_api = ProxmoxAPI(host=self._api.host, user=self._userid, password=password, verify_ssl=False)
+        return tmp_api.get_tokens()
 
     def __str__(self):
         return self.id

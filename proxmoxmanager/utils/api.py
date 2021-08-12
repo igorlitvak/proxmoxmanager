@@ -9,6 +9,11 @@ class APIWrapper:
     def __init__(self, host: str, user: str, token_name: str, token_value: str):
         self._proxmoxer = ProxmoxAPI(host=host, user=user, token_name=token_name, token_value=token_value,
                                      verify_ssl=False)
+        self._host = host
+
+    @property
+    def host(self):
+        return self._host
 
     def get_version(self, **kwargs):
         return self._proxmoxer.version.get(**kwargs)
