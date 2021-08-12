@@ -8,6 +8,14 @@ class ProxmoxManager:
     """
     Smart Proxmox VE API wrapper
     """
+    pass
+
+
+class SimpleProxmoxManager:
+    """
+    Smart Proxmox VE API wrapper
+    This version is simplified and only consists of methods
+    """
 
     def __init__(self, host: str, user: str, token_name: str, token_value: str):
         self._host = host

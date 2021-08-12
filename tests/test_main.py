@@ -1,10 +1,10 @@
-from proxmoxmanager.main import ProxmoxManager, APIWrapper
+from proxmoxmanager.main import SimpleProxmoxManager, APIWrapper
 import unittest
 from unittest.mock import patch
 
 
-class TestProxmoxManager(unittest.TestCase):
-    proxmoxmanager = ProxmoxManager(host="0.0.0.0:8006", user="root@pam", token_name="name", token_value="secret")
+class TestSimpleProxmoxManager(unittest.TestCase):
+    proxmoxmanager = SimpleProxmoxManager(host="0.0.0.0:8006", user="root@pam", token_name="name", token_value="secret")
     proxmoxmanager._logger.setLevel("CRITICAL")  # Hide logs from console without disabling them
 
     def test_list_users(self):
