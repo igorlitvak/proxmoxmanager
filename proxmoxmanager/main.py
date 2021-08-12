@@ -148,7 +148,6 @@ class SimpleProxmoxManager:
         :param node
         :return: Node info in JSON-like format
         """
-        # TODO
         return self._api.get_node_status(node=node)
 
     def list_resources(self, resource_type: str = None) -> list:
@@ -269,7 +268,6 @@ class SimpleProxmoxManager:
         :param timeout: Number of seconds to wait (optional)
         :return: ID of task
         """
-        # TODO
         kwargs = {"node": node, "vmid": vmid}
         if timeout is not None:
             kwargs["timeout"] = str(timeout)
@@ -283,7 +281,6 @@ class SimpleProxmoxManager:
         :param timeout: Number of seconds to wait (optional)
         :return: ID of task
         """
-        # TODO
         kwargs = {"node": node, "vmid": vmid}
         if timeout is not None:
             kwargs["timeout"] = str(timeout)
@@ -298,7 +295,6 @@ class SimpleProxmoxManager:
         :param force_stop: Whether to stop a VM if shutdown failed (optional, default=True)
         :return: ID of task
         """
-        # TODO
         kwargs = {"node": node, "vmid": vmid, "forceStop": '1' if force_stop else '0'}
         if timeout is not None:
             kwargs["timeout"] = str(timeout)
@@ -311,7 +307,6 @@ class SimpleProxmoxManager:
         :param vmid
         :return: ID of task
         """
-        # TODO
         kwargs = {"node": node, "vmid": vmid}
         return self._api.reset_vm(**kwargs)
 
@@ -323,7 +318,6 @@ class SimpleProxmoxManager:
         :param timeout: Number of seconds to wait (optional)
         :return: ID of task
         """
-        # TODO
         kwargs = {"node": node, "vmid": vmid}
         if timeout is not None:
             kwargs["timeout"] = str(timeout)
@@ -337,7 +331,6 @@ class SimpleProxmoxManager:
         :param to_disk: Whether to suspend VM to disk (optional, defaul=False)
         :return: ID of task
         """
-        # TODO
         kwargs = {"node": node, "vmid": vmid, "todisk": '1' if to_disk else '0'}
         return self._api.suspend_vm(**kwargs)
 
@@ -348,7 +341,6 @@ class SimpleProxmoxManager:
         :param vmid
         :return: ID of task
         """
-        # TODO
         kwargs = {"node": node, "vmid": vmid}
         return self._api.resume_vm(**kwargs)
 
@@ -359,7 +351,6 @@ class SimpleProxmoxManager:
         :param vmid
         :return: ID of task
         """
-        # TODO
         kwargs = {"node": node, "vmid": vmid}
         return self._api.start_container(**kwargs)
 
@@ -370,7 +361,6 @@ class SimpleProxmoxManager:
         :param vmid
         :return: ID of task
         """
-        # TODO
         kwargs = {"node": node, "vmid": vmid}
         return self._api.stop_container(**kwargs)
 
@@ -383,7 +373,6 @@ class SimpleProxmoxManager:
         :param force_stop: Whether to stop a container if shutdown failed (optional, default=True)
         :return: ID of task
         """
-        # TODO
         kwargs = {"node": node, "vmid": vmid, "forceStop": '1' if force_stop else '0'}
         if timeout is not None:
             kwargs["timeout"] = str(timeout)
@@ -397,7 +386,6 @@ class SimpleProxmoxManager:
         :param timeout: Number of seconds to wait (optional)
         :return: ID of task
         """
-        # TODO
         kwargs = {"node": node, "vmid": vmid}
         if timeout is not None:
             kwargs["timeout"] = str(timeout)
@@ -411,7 +399,6 @@ class SimpleProxmoxManager:
         :param vmid
         :return: ID of task
         """
-        # TODO
         kwargs = {"node": node, "vmid": vmid}
         return self._api.suspend_container(**kwargs)
 
@@ -423,7 +410,6 @@ class SimpleProxmoxManager:
         :param vmid
         :return: ID of task
         """
-        # TODO
         kwargs = {"node": node, "vmid": vmid}
         return self._api.resume_container(**kwargs)
 

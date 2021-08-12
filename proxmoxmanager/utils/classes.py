@@ -18,13 +18,20 @@ class ProxmoxNode:
     def id(self) -> str:
         return self._node
 
-    @property
     def online(self) -> bool:
-        # TODO
-        return True
+        # TODO: probably could be cone with get_status_report
+        resp = self._api.list_nodes()
+        return any(elem["node"] == self._node for elem in resp if elem["status"] == "online")
+
+    def get_status_report(self) -> Dict[str, str]:
+        """
+        Get detailed info about this node
+        :return: Node info in JSON-like format
+        """
+        return self._api.get_node_status(self._node)
 
     def __str__(self):
-        return self.id
+        return self._node
 
 
 class ProxmoxNodeList:
@@ -79,7 +86,7 @@ class ProxmoxUser:
         return tmp_api.get_tokens()
 
     def __str__(self):
-        return self.id
+        return self._userid
 
 
 class ProxmoxUserList:
@@ -129,8 +136,78 @@ class ProxmoxVM:
         """
         return ProxmoxNode(self._api, self._node)
 
+    def start(self, timeout: int = None) -> str:
+        """
+        Start virtual machine
+        :param timeout: Number of seconds to wait (optional)
+        :return: ID of task
+        """
+        kwargs = {"node": self._node, "vmid": self._vmid}
+        if timeout is not None:
+            kwargs["timeout"] = str(timeout)
+        return self._api.start_vm(**kwargs)
+
+    def stop(self, timeout: int = None) -> str:
+        """
+        Stop virtual machine (unsafely)
+        :param timeout: Number of seconds to wait (optional)
+        :return: ID of task
+        """
+        kwargs = {"node": self._node, "vmid": self._vmid}
+        if timeout is not None:
+            kwargs["timeout"] = str(timeout)
+        return self._api.stop_vm(**kwargs)
+
+    def shutdown(self, timeout: int = None, force_stop: bool = True) -> str:
+        """
+        Shutdown virtual machine (safely)
+        :param timeout: Number of seconds to wait (optional)
+        :param force_stop: Whether to stop a VM if shutdown failed (optional, default=True)
+        :return: ID of task
+        """
+        kwargs = {"node": self._node, "vmid": self._vmid, "forceStop": '1' if force_stop else '0'}
+        if timeout is not None:
+            kwargs["timeout"] = str(timeout)
+        return self._api.shutdown_vm(**kwargs)
+
+    def reset(self) -> str:
+        """
+        Reset virtual machine (unsafely)
+        :return: ID of task
+        """
+        kwargs = {"node": self._node, "vmid": self._vmid}
+        return self._api.reset_vm(**kwargs)
+
+    def reboot(self, timeout: int = None) -> str:
+        """
+        Reboot virtual machine (safely)
+        :param timeout: Number of seconds to wait (optional)
+        :return: ID of task
+        """
+        kwargs = {"node": self._node, "vmid": self._vmid}
+        if timeout is not None:
+            kwargs["timeout"] = str(timeout)
+        return self._api.reboot_vm(**kwargs)
+
+    def suspend(self, to_disk: bool = False) -> str:
+        """
+        Suspend virtual machine
+        :param to_disk: Whether to suspend VM to disk (optional, defaul=False)
+        :return: ID of task
+        """
+        kwargs = {"node": self._node, "vmid": self._vmid, "todisk": '1' if to_disk else '0'}
+        return self._api.suspend_vm(**kwargs)
+
+    def resume(self) -> str:
+        """
+        Resume virtual machine
+        :return: ID of task
+        """
+        kwargs = {"node": self._node, "vmid": self._vmid}
+        return self._api.resume_vm(**kwargs)
+
     def __str__(self):
-        return self.id
+        return self._vmid
 
 
 class ProxmoxVMList:
@@ -181,10 +258,90 @@ class ProxmoxContainer:
         """
         return ProxmoxNode(self._api, self._node)
 
+    def start(self) -> str:
+        """
+        Start container
+        :return: ID of task
+        """
+        kwargs = {"node": self._node, "vmid": self._vmid}
+        return self._api.start_container(**kwargs)
+
+    def stop(self) -> str:
+        """
+        Stop container (unsafely)
+        :return: ID of task
+        """
+        kwargs = {"node": self._node, "vmid": self._vmid}
+        return self._api.stop_container(**kwargs)
+
+    def shutdown(self, timeout: int = None, force_stop: bool = True) -> str:
+        """
+        Shutdown container (safely)
+        :param timeout: Number of seconds to wait (optional)
+        :param force_stop: Whether to stop a container if shutdown failed (optional, default=True)
+        :return: ID of task
+        """
+        kwargs = {"node": self._node, "vmid": self._vmid, "forceStop": '1' if force_stop else '0'}
+        if timeout is not None:
+            kwargs["timeout"] = str(timeout)
+        return self._api.shutdown_container(**kwargs)
+
+    def reboot(self, timeout: int = None) -> str:
+        """
+        Reboot container (safely)
+        :param timeout: Number of seconds to wait (optional)
+        :return: ID of task
+        """
+        kwargs = {"node": self._node, "vmid": self._vmid}
+        if timeout is not None:
+            kwargs["timeout"] = str(timeout)
+        return self._api.reboot_container(**kwargs)
+
+    def suspend(self) -> str:
+        """
+        Suspend container
+        WARNING: doesn't appear in Proxmox GUI and probably never works
+        :return: ID of task
+        """
+        kwargs = {"node": self._node, "vmid": self._vmid}
+        return self._api.suspend_container(**kwargs)
+
+    def resume(self) -> str:
+        """
+        Resume container
+        WARNING: doesn't appear in Proxmox GUI and probably never works
+        :return: ID of task
+        """
+        kwargs = {"node": self._node, "vmid": self._vmid}
+        return self._api.resume_container(**kwargs)
+
     def __str__(self):
-        return self.id
+        return self._vmid
 
 
 class ProxmoxContainerList:
     def __init__(self, api: APIWrapper):
         self._api = api
+        self._containers: Dict[str, ProxmoxContainer] = {cont.id: cont for cont in self._get_containers()}
+
+    def keys(self):
+        return self._containers.keys()
+
+    def values(self):
+        return self._containers.values()
+
+    def items(self):
+        return self._containers.items()
+
+    def __len__(self):
+        return len(self._containers)
+
+    def __getitem__(self, key: str) -> ProxmoxContainer:
+        return self._containers[key]
+
+    def _get_containers(self) -> List[ProxmoxContainer]:
+        containers = []
+        for node in ProxmoxNodeList(self._api).keys():
+            resp = self._api.list_containers(node)
+            containers += [ProxmoxContainer(self._api, cont["vmid"], node) for cont in resp]
+        return containers
