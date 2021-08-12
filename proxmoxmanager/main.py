@@ -2,6 +2,7 @@ from proxmoxer import ProxmoxAPI
 import re
 import logging
 from typing import Tuple
+
 from proxmoxmanager.utils import *
 
 
@@ -9,7 +10,31 @@ class ProxmoxManager:
     """
     Smart Proxmox VE API wrapper
     """
-    pass
+
+    def __init__(self, host: str, user: str, token_name: str, token_value: str):
+        self._host = host
+        self._api = APIWrapper(host=host, user=user, token_name=token_name, token_value=token_value)
+        # self._logger = logging.getLogger(__name__)
+        self._node_list = ProxmoxNodeList(self._api)
+        self._user_list = ProxmoxUserList(self._api)
+        self._vm_list = ProxmoxVMList(self._api)
+        self._container_list = ProxmoxContainerList(self._api)
+
+    @property
+    def nodes(self):
+        return self._node_list
+
+    @property
+    def users(self) -> ProxmoxUserList:
+        return self._user_list
+
+    @property
+    def vms(self) -> ProxmoxVMList:
+        return self._vm_list
+
+    @property
+    def containers(self) -> ProxmoxContainerList:
+        return self._container_list
 
 
 class SimpleProxmoxManager:
@@ -116,7 +141,6 @@ class SimpleProxmoxManager:
         List all nodes
         :return: List of nodes in JSON-like format
         """
-        # TODO
         return self._api.list_nodes()
 
     def get_node_status(self, node: str) -> dict:
