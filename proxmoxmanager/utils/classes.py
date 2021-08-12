@@ -115,10 +115,50 @@ class ProxmoxVM:
         self._vmid = vmid
         self._node = node
 
+    @property
+    def id(self) -> str:
+        """
+        :return: Unique ID of VM (get-only)
+        """
+        return self._vmid
+
+    @property
+    def node(self) -> ProxmoxNode:
+        """
+        :return: Node on which VM is located (get-only)
+        """
+        return ProxmoxNode(self._api, self._node)
+
+    def __str__(self):
+        return self.id
+
 
 class ProxmoxVMList:
     def __init__(self, api: APIWrapper):
         self._api = api
+        self._vms: Dict[str, ProxmoxVM] = {vm.id: vm for vm in self._get_vms()}
+
+    def keys(self):
+        return self._vms.keys()
+
+    def values(self):
+        return self._vms.values()
+
+    def items(self):
+        return self._vms.items()
+
+    def __len__(self):
+        return len(self._vms)
+
+    def __getitem__(self, key: str) -> ProxmoxVM:
+        return self._vms[key]
+
+    def _get_vms(self) -> List[ProxmoxVM]:
+        vms = []
+        for node in ProxmoxNodeList(self._api).keys():
+            resp = self._api.list_vms(node)
+            vms += [ProxmoxVM(self._api, vm["vmid"], node) for vm in resp]
+        return vms
 
 
 class ProxmoxContainer:
@@ -126,6 +166,23 @@ class ProxmoxContainer:
         self._api = api
         self._vmid = vmid
         self._node = node
+
+    @property
+    def id(self) -> str:
+        """
+        :return: Unique ID of container (get-only)
+        """
+        return self._vmid
+
+    @property
+    def node(self) -> ProxmoxNode:
+        """
+        :return: Node on which containers is located (get-only)
+        """
+        return ProxmoxNode(self._api, self._node)
+
+    def __str__(self):
+        return self.id
 
 
 class ProxmoxContainerList:
