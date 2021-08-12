@@ -19,7 +19,7 @@ class ProxmoxNode:
         return self._node
 
     def online(self) -> bool:
-        # TODO: probably could be cone with get_status_report
+        # TODO: probably could be done with get_status_report
         resp = self._api.list_nodes()
         return any(elem["node"] == self._node for elem in resp if elem["status"] == "online")
 
