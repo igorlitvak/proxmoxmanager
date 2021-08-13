@@ -34,7 +34,7 @@ class APIWrapper:
         return self._proxmoxer.access.permissions.get(**kwargs)
 
     def get_access_control_list(self, **kwargs):
-        return self._proxmoxer.access.acl.put(**kwargs)
+        return self._proxmoxer.access.acl.get(**kwargs)
 
     def update_access_control_list(self, path: str, roles: str, **kwargs):
         return self._proxmoxer.access.acl.put(path=path, roles=roles, **kwargs)
