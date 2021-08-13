@@ -1,6 +1,6 @@
 from ..api import APIWrapper
-from .node import ProxmoxNode, ProxmoxNodeDict
-from .user import ProxmoxUser
+from .nodes import ProxmoxNode, ProxmoxNodeDict
+from .users import ProxmoxUser
 from typing import Dict, List, Tuple, Any, Union
 
 
