@@ -53,7 +53,6 @@ class SimpleProxmoxManager:
         List all users
         :return: List of users in JSON-like format
         """
-        # TODO
         return self._api.list_users()
 
     def get_user(self, userid: str) -> dict:
@@ -168,7 +167,6 @@ class SimpleProxmoxManager:
         :param node
         :return: List of vitrual machines in JSON-like format
         """
-        # TODO
         return self._api.list_vms(node=node)
 
     def get_vm_status(self, node: str, vmid: str) -> dict:
@@ -178,7 +176,6 @@ class SimpleProxmoxManager:
         :param vmid
         :return: Virtual machine info in JSON-like format
         """
-        # TODO
         return self._api.get_vm_status(node=node, vmid=vmid)
 
     def delete_vm(self, node: str, vmid: str) -> str:
@@ -188,7 +185,6 @@ class SimpleProxmoxManager:
         :param vmid
         :return: ID of deleting task
         """
-        # TODO
         return self._api.delete_vm(node=node, vmid=vmid)
 
     def clone_vm(self, newid: str, node: str, vmid: str, name: str = None, full: bool = True,
@@ -217,7 +213,6 @@ class SimpleProxmoxManager:
         :param node
         :return: List of containers in JSON-like format
         """
-        # TODO
         return self._api.list_containers(node=node)
 
     def get_container_status(self, node: str, vmid: str) -> dict:
@@ -227,7 +222,6 @@ class SimpleProxmoxManager:
         :param vmid
         :return: Container info in JSON-like format
         """
-        # TODO
         return self._api.get_container_status(node=node, vmid=vmid)
 
     def delete_container(self, node: str, vmid: str) -> str:
@@ -237,7 +231,6 @@ class SimpleProxmoxManager:
         :param vmid
         :return: ID of deleting task
         """
-        # TODO
         return self._api.delete_container(node=node, vmid=vmid)
 
     def clone_container(self, newid: str, node: str, vmid: str, hostname: str = None, full: bool = True,

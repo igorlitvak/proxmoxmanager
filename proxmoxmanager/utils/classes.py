@@ -4,6 +4,8 @@ from random import choice
 from proxmoxer import ProxmoxAPI
 
 
+# TODO: check that all typehints are correct
+
 class ProxmoxException(Exception):
     def __init__(self, message):
         super().__init__(message)
@@ -25,7 +27,7 @@ class ProxmoxNode:
 
     def get_status_report(self) -> Dict[str, str]:
         """
-        Get detailed info about this node
+        Get detailed status info about this node
         :return: Node info in JSON-like format
         """
         return self._api.get_node_status(self._node)
@@ -77,7 +79,7 @@ class ProxmoxUser:
         """
         return self._userid
 
-    def get_user_tokens(self, password: str) -> Tuple[str, str]:
+    def get_tokens(self, password: str) -> Tuple[str, str]:
         """
         :param password
         :return: Tuple consisting of the authentication and CSRF tokens
@@ -135,6 +137,20 @@ class ProxmoxVM:
         :return: Node on which VM is located (get-only)
         """
         return ProxmoxNode(self._api, self._node)
+
+    def get_status_report(self) -> Dict[str, str]:
+        """
+        Get detailed status info about this VM
+        :return: Virtual machine info in JSON-like format
+        """
+        return self._api.get_vm_status(node=self._node, vmid=self._vmid)
+
+    def delete(self) -> str:
+        """
+        Delete this VM
+        :return: ID of deleting task
+        """
+        return self._api.delete_vm(node=self._node, vmid=self._vmid)
 
     def start(self, timeout: int = None) -> str:
         """
@@ -257,6 +273,20 @@ class ProxmoxContainer:
         :return: Node on which containers is located (get-only)
         """
         return ProxmoxNode(self._api, self._node)
+
+    def get_status_report(self) -> Dict[str, str]:
+        """
+        Get detailed status info about this container
+        :return: Container info in JSON-like format
+        """
+        return self._api.get_container_status(node=self._node, vmid=self._vmid)
+
+    def delete(self) -> str:
+        """
+        Delete this container
+        :return: ID of deleting task
+        """
+        return self._api.delete_container(node=self._node, vmid=self._vmid)
 
     def start(self) -> str:
         """
