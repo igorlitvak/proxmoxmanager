@@ -18,19 +18,19 @@ class ProxmoxManager:
 
     @property
     def nodes(self):
-        return ProxmoxNodeList(self._api)
+        return ProxmoxNodeDict(self._api)
 
     @property
-    def users(self) -> ProxmoxUserList:
-        return ProxmoxUserList(self._api)
+    def users(self) -> ProxmoxUserDict:
+        return ProxmoxUserDict(self._api)
 
     @property
-    def vms(self) -> ProxmoxVMList:
-        return ProxmoxVMList(self._api)
+    def vms(self) -> ProxmoxVMDict:
+        return ProxmoxVMDict(self._api)
 
     @property
-    def containers(self) -> ProxmoxContainerList:
-        return ProxmoxContainerList(self._api)
+    def containers(self) -> ProxmoxContainerDict:
+        return ProxmoxContainerDict(self._api)
 
 
 class SimpleProxmoxManager:

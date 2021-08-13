@@ -39,11 +39,14 @@ class ProxmoxNode:
         """
         return self._api.get_node_status(self._node)
 
+    def __repr__(self):
+        return f"<{self.__class__.__name__}: {self._node}>"
+
     def __str__(self):
         return self._node
 
 
-class ProxmoxNodeList:
+class ProxmoxNodeDict:
     def __init__(self, api: APIWrapper):
         self._api = api
         self._nodes: Dict[str, ProxmoxNode] = {node.id: node for node in self._get_nodes()}
@@ -95,6 +98,9 @@ class ProxmoxNodeList:
     def __getitem__(self, key: str) -> ProxmoxNode:
         return self._nodes[key]
 
+    def __repr__(self):
+        return f"<{self.__class__.__name__}: {repr(self._nodes)}>"
+
     def _get_nodes(self) -> List[ProxmoxNode]:
         resp = self._api.list_nodes()
         return [ProxmoxNode(self._api, elem["node"]) for elem in resp]
@@ -121,11 +127,14 @@ class ProxmoxUser:
         tmp_api = ProxmoxAPI(host=self._api.host, user=self._userid + "@pve", password=password, verify_ssl=False)
         return tmp_api.get_tokens()
 
+    def __repr__(self):
+        return f"<{self.__class__.__name__}: {self._userid}>"
+
     def __str__(self):
         return self._userid
 
 
-class ProxmoxUserList:
+class ProxmoxUserDict:
     def __init__(self, api: APIWrapper):
         self._api = api
         self._users: Dict[str, ProxmoxUser] = {user.id: user for user in self._get_users()}
@@ -144,6 +153,9 @@ class ProxmoxUserList:
 
     def __getitem__(self, key: str) -> ProxmoxUser:
         return self._users[key]
+
+    def __repr__(self):
+        return f"<{self.__class__.__name__}: {repr(self._users)}>"
 
     def _get_users(self) -> List[ProxmoxUser]:
         resp = self._api.list_users()
@@ -257,11 +269,14 @@ class ProxmoxVM:
         kwargs = {"node": self._node, "vmid": self._vmid}
         return self._api.resume_vm(**kwargs)
 
+    def __repr__(self):
+        return f"<{self.__class__.__name__}: {self._vmid}>"
+
     def __str__(self):
         return self._vmid
 
 
-class ProxmoxVMList:
+class ProxmoxVMDict:
     def __init__(self, api: APIWrapper):
         self._api = api
         self._vms: Dict[str, ProxmoxVM] = {vm.id: vm for vm in self._get_vms()}
@@ -281,9 +296,12 @@ class ProxmoxVMList:
     def __getitem__(self, key: str) -> ProxmoxVM:
         return self._vms[key]
 
+    def __repr__(self):
+        return f"<{self.__class__.__name__}: {repr(self._vms)}>"
+
     def _get_vms(self) -> List[ProxmoxVM]:
         vms = []
-        for node in ProxmoxNodeList(self._api).keys():
+        for node in ProxmoxNodeDict(self._api).keys():
             resp = self._api.list_vms(node)
             vms += [ProxmoxVM(self._api, vm["vmid"], node) for vm in resp]
         return vms
@@ -380,11 +398,14 @@ class ProxmoxContainer:
         kwargs = {"node": self._node, "vmid": self._vmid}
         return self._api.resume_container(**kwargs)
 
+    def __repr__(self):
+        return f"<{self.__class__.__name__}: {self._vmid}>"
+
     def __str__(self):
         return self._vmid
 
 
-class ProxmoxContainerList:
+class ProxmoxContainerDict:
     def __init__(self, api: APIWrapper):
         self._api = api
         self._containers: Dict[str, ProxmoxContainer] = {cont.id: cont for cont in self._get_containers()}
@@ -404,9 +425,12 @@ class ProxmoxContainerList:
     def __getitem__(self, key: str) -> ProxmoxContainer:
         return self._containers[key]
 
+    def __repr__(self):
+        return f"<{self.__class__.__name__}: {repr(self._containers)}>"
+
     def _get_containers(self) -> List[ProxmoxContainer]:
         containers = []
-        for node in ProxmoxNodeList(self._api).keys():
+        for node in ProxmoxNodeDict(self._api).keys():
             resp = self._api.list_containers(node)
             containers += [ProxmoxContainer(self._api, cont["vmid"], node) for cont in resp]
         return containers
