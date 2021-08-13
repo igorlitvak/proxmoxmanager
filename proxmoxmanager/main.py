@@ -101,7 +101,6 @@ class SimpleProxmoxManager:
         :param propagate: Whether to inherit permissions (optional, default=False)
         :return: None
         """
-        # TODO
         userid = self._append_pve_to_userid(userid)
         return self._api.update_access_control_list(path=path, roles=role, users=userid, delete="0",
                                                     propagate='1' if propagate else '0')
@@ -115,7 +114,6 @@ class SimpleProxmoxManager:
         :param propagate: Whether to inherit permissions (optional, default=False)
         :return: None
         """
-        # TODO
         userid = self._append_pve_to_userid(userid)
         return self._api.update_access_control_list(path=path, roles=role, users=userid, delete="1",
                                                     propagate='1' if propagate else '0')

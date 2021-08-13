@@ -1,6 +1,7 @@
 from ..api import APIWrapper
 from .node import ProxmoxNode, ProxmoxNodeDict
-from typing import Dict, List, Any
+from .user import ProxmoxUser
+from typing import Dict, List, Tuple, Any, Union
 
 
 class ProxmoxVM:
@@ -121,6 +122,49 @@ class ProxmoxVM:
         """
         kwargs = {"node": self._node, "vmid": self._vmid}
         return self._api.resume_vm(**kwargs)
+
+    def view_permissions(self) -> List[Tuple[ProxmoxUser, str]]:
+        """
+        Get a list of users with permissions for this VM and their roles
+        :return: List of tuples of ProxmoxUser objects and string names of roles
+        """
+        # TODO: maybe need to show if permission is enabled
+        path = "/vms/" + self._vmid
+        resp = self._api.get_access_control_list()
+        return [(ProxmoxUser(self._api, el["ugid"].split("@")[0]), el["roleid"]) for el in resp if
+                el["path"] and el["type"] == "user" and el["ugid"].split("@")[1] == "pve" and el["path"] == path]
+
+    def add_permission(self, user: Union[str, ProxmoxUser], role: str) -> None:
+        """
+        Add new permission for this VM
+        :param user: User ID or ProxmoxUser object
+        :param role: String name of the role
+        :return: None
+        """
+        path = "/vms/" + self._vmid
+        if isinstance(user, ProxmoxUser):
+            user = user.id
+        self._api.update_access_control_list(path=path, roles=role, users=user + "@pve", delete="0", propagate="0")
+
+    def remove_permission(self, user: Union[str, ProxmoxUser], role: str) -> None:
+        """
+        Remove permission for this VM
+        :param user: User ID or ProxmoxUser object
+        :param role: String name of the role
+        :return: None
+        """
+        path = "/vms/" + self._vmid
+        if isinstance(user, ProxmoxUser):
+            user = user.id
+        self._api.update_access_control_list(path=path, roles=role, users=user + "@pve", delete="1", propagate="0")
+
+    def remove_all_permissions(self) -> None:
+        """
+        Remove all permissions for this VM for all users with any role
+        :return: None
+        """
+        for user, permission in self.view_permissions():
+            self.remove_permission(user, permission)
 
     def __repr__(self):
         return f"<{self.__class__.__name__}: {self._vmid}>"
