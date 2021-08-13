@@ -1,5 +1,5 @@
 from .api import APIWrapper
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Any
 from random import choice
 from proxmoxer import ProxmoxAPI
 
@@ -25,7 +25,7 @@ class ProxmoxNode:
         resp = self._api.list_nodes()
         return any(elem["node"] == self._node for elem in resp if elem["status"] == "online")
 
-    def get_status_report(self) -> Dict[str, str]:
+    def get_status_report(self) -> Dict[str, Any]:
         """
         Get detailed status info about this node
         :return: Node info in JSON-like format
@@ -84,7 +84,7 @@ class ProxmoxUser:
         :param password
         :return: Tuple consisting of the authentication and CSRF tokens
         """
-        tmp_api = ProxmoxAPI(host=self._api.host, user=self._userid, password=password, verify_ssl=False)
+        tmp_api = ProxmoxAPI(host=self._api.host, user=self._userid + "@pve", password=password, verify_ssl=False)
         return tmp_api.get_tokens()
 
     def __str__(self):
@@ -138,7 +138,7 @@ class ProxmoxVM:
         """
         return ProxmoxNode(self._api, self._node)
 
-    def get_status_report(self) -> Dict[str, str]:
+    def get_status_report(self) -> Dict[str, Any]:
         """
         Get detailed status info about this VM
         :return: Virtual machine info in JSON-like format
@@ -274,7 +274,7 @@ class ProxmoxContainer:
         """
         return ProxmoxNode(self._api, self._node)
 
-    def get_status_report(self) -> Dict[str, str]:
+    def get_status_report(self) -> Dict[str, Any]:
         """
         Get detailed status info about this container
         :return: Container info in JSON-like format

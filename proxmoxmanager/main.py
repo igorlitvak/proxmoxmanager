@@ -15,26 +15,22 @@ class ProxmoxManager:
         self._host = host
         self._api = APIWrapper(host=host, user=user, token_name=token_name, token_value=token_value)
         # self._logger = logging.getLogger(__name__)
-        self._node_list = ProxmoxNodeList(self._api)
-        self._user_list = ProxmoxUserList(self._api)
-        self._vm_list = ProxmoxVMList(self._api)
-        self._container_list = ProxmoxContainerList(self._api)
 
     @property
     def nodes(self):
-        return self._node_list
+        return ProxmoxNodeList(self._api)
 
     @property
     def users(self) -> ProxmoxUserList:
-        return self._user_list
+        return ProxmoxUserList(self._api)
 
     @property
     def vms(self) -> ProxmoxVMList:
-        return self._vm_list
+        return ProxmoxVMList(self._api)
 
     @property
     def containers(self) -> ProxmoxContainerList:
-        return self._container_list
+        return ProxmoxContainerList(self._api)
 
 
 class SimpleProxmoxManager:
