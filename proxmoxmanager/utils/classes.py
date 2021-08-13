@@ -192,6 +192,20 @@ class ProxmoxVM:
         """
         return self._api.get_vm_status(node=self._node, vmid=self._vmid)
 
+    def get_config(self) -> Dict[str, Any]:
+        """
+        Get detailed config
+        :return: VM config in JSON-like format
+        """
+        return self._api.get_vm_config(node=self._node, vmid=self._vmid)
+
+    def is_template(self) -> bool:
+        """
+        Whether this VM is a template
+        :return: True/False
+        """
+        return self.get_config()["template"] == 1
+
     def delete(self) -> str:
         """
         Delete this VM
@@ -333,6 +347,20 @@ class ProxmoxContainer:
         :return: Container info in JSON-like format
         """
         return self._api.get_container_status(node=self._node, vmid=self._vmid)
+
+    def get_config(self) -> Dict[str, Any]:
+        """
+        Get detailed config
+        :return: Container config in JSON-like format
+        """
+        return self._api.get_container_config(node=self._node, vmid=self._vmid)
+
+    def is_template(self) -> bool:
+        """
+        Whether this container is a template
+        :return: True/False
+        """
+        return self.get_config()["template"] == 1
 
     def delete(self) -> str:
         """

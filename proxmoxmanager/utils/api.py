@@ -54,6 +54,9 @@ class APIWrapper:
     def get_vm_status(self, node: str, vmid: str, **kwargs):
         return self._proxmoxer.nodes(node).qemu(vmid).status.current.get(**kwargs)
 
+    def get_vm_config(self, node: str, vmid: str, **kwargs):
+        return self._proxmoxer.nodes(node).qemu(vmid).config.get(**kwargs)
+
     def delete_vm(self, node: str, vmid: str, **kwargs):
         return self._proxmoxer.nodes(node).qemu(vmid).delete(**kwargs)
 
@@ -65,6 +68,9 @@ class APIWrapper:
 
     def get_container_status(self, node: str, vmid: str, **kwargs):
         return self._proxmoxer.nodes(node).lxc(vmid).status.current.get(**kwargs)
+
+    def get_container_config(self, node: str, vmid: str, **kwargs):
+        return self._proxmoxer.nodes(node).lxc(vmid).config.get(**kwargs)
 
     def delete_container(self, node: str, vmid: str, **kwargs):
         return self._proxmoxer.nodes(node).lxc(vmid).delete(**kwargs)
