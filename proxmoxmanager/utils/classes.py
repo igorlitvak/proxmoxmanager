@@ -18,9 +18,16 @@ class ProxmoxNode:
 
     @property
     def id(self) -> str:
+        """
+        :return: Unique ID of node (get-only)
+        """
         return self._node
 
     def online(self) -> bool:
+        """
+        Check if node is currently online
+        :return: True/False
+        """
         # TODO: probably could be done with get_status_report
         resp = self._api.list_nodes()
         return any(elem["node"] == self._node for elem in resp if elem["status"] == "online")
@@ -50,11 +57,37 @@ class ProxmoxNodeList:
     def items(self):
         return self._nodes.items()
 
-    def choose_node_random(self, online_only: bool = True) -> ProxmoxNode:
+    def choose_at_random(self, online_only: bool = True) -> ProxmoxNode:
+        """
+        Choose random node from list of availible nodes
+        :param online_only: Only choose between nodes that are currently online (optional, default=True)
+        :return: ProxmoxNode object
+        """
         valid_choices = [node for node in self.values() if node.online or not online_only]
         if not valid_choices:
             raise ProxmoxException(f"No {'online ' if online_only else ''}nodes found")
         return choice(valid_choices)
+
+    def choose_by_most_free_ram(self, absolute: bool = True, online_only: bool = True):
+        """
+        Choose from list of availible nodes with most free RAM
+        :param absolute: Whether to rate free RAM in bytes or % (optional, default=True)
+        :param online_only: Only choose between nodes that are currently online (optional, default=True)
+        :return: ProxmoxNode object
+        """
+        valid_choices = [node for node in self.values() if node.online or not online_only]
+        if not valid_choices:
+            raise ProxmoxException(f"No {'online ' if online_only else ''}nodes found")
+        best_rating = 0.0
+        best_node = valid_choices[0]
+        for node in valid_choices[1:]:
+            memory_info = node.get_status_report()["memory"]
+            rating = float(memory_info["free"])
+            if not absolute:
+                rating /= float(memory_info["total"])
+            if rating > best_rating:
+                best_node = node
+        return best_node
 
     def __len__(self):
         return len(self._nodes)
@@ -81,6 +114,7 @@ class ProxmoxUser:
 
     def get_tokens(self, password: str) -> Tuple[str, str]:
         """
+        Get tokens needed to authenticate user
         :param password
         :return: Tuple consisting of the authentication and CSRF tokens
         """
@@ -134,7 +168,8 @@ class ProxmoxVM:
     @property
     def node(self) -> ProxmoxNode:
         """
-        :return: Node on which VM is located (get-only)
+        Node on which VM is located (get-only)
+        :return: ProxmoxNode object
         """
         return ProxmoxNode(self._api, self._node)
 
