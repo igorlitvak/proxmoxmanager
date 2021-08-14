@@ -1,5 +1,4 @@
 from ..api import APIWrapper
-from proxmoxer import ProxmoxAPI
 from typing import Tuple, Dict, Any
 
 
@@ -29,8 +28,18 @@ class ProxmoxUser:
         :param password
         :return: Tuple consisting of the authentication and CSRF tokens
         """
-        tmp_api = ProxmoxAPI(host=self._api.host, user=self._fulluserid, password=password, verify_ssl=False)
-        return tmp_api.get_tokens()
+        return self._api.get_user_tokens(userid=self._fulluserid, password=password)
+
+    def change_password(self, old_password: str, new_password: str) -> None:
+        """
+        Change this user's password
+        :param old_password: Current password (can't be retrieved via API)
+        :param new_password: New password at least 5 characters long
+        :return: None
+        """
+        if len(new_password) < 5:
+            raise ValueError(f"Password has to be at least 5 characters long")
+        self._api.change_user_password(userid=self._fulluserid, old_password=old_password, new_password=new_password)
 
     def delete(self) -> None:
         """

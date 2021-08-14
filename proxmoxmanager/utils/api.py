@@ -15,6 +15,14 @@ class APIWrapper:
     def host(self):
         return self._host
 
+    def get_user_tokens(self, userid: str, password: str):
+        tmp_api = ProxmoxAPI(host=self._host, user=userid, password=password, verify_ssl=False)
+        return tmp_api.get_tokens()
+
+    def change_user_password(self, userid: str, old_password: str, new_password: str, **kwargs):
+        tmp_api = ProxmoxAPI(host=self._host, user=userid, password=old_password, verify_ssl=False)
+        return tmp_api.access.password.put(userid=userid, password=new_password, **kwargs)
+
     def get_version(self, **kwargs):
         return self._proxmoxer.version.get(**kwargs)
 
