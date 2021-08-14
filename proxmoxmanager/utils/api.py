@@ -27,6 +27,9 @@ class APIWrapper:
     def create_user(self, userid: str, password: str, **kwargs):
         return self._proxmoxer.access.users.post(userid=userid, password=password, **kwargs)
 
+    def delete_user(self, userid: str, **kwargs):
+        return self._proxmoxer.access.users(userid).delete(**kwargs)
+
     def list_roles(self, **kwargs):
         return self._proxmoxer.access.roles.get(**kwargs)
 

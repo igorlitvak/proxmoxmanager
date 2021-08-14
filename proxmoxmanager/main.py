@@ -57,7 +57,6 @@ class SimpleProxmoxManager:
         :param userid: Username in username@pve or username@pam format
         :return: User info in JSON-like format
         """
-        # TODO
         userid = self._append_pve_to_userid(userid)
         return self._api.get_user(userid=userid)
 
@@ -69,7 +68,6 @@ class SimpleProxmoxManager:
         :param kwargs: Other arguments passed to Proxmox API
         :return: None
         """
-        # TODO
         if not re.match(r"^\w+@pve$", userid):
             userid = userid + "@pve"
         return self._api.create_user(userid=userid, password=password, **kwargs)
