@@ -191,7 +191,6 @@ class SimpleProxmoxManager:
         :param target: New node ID (optional)
         :return: ID of cloning task
         """
-        # TODO
         kwargs = {"newid": newid, "node": node, "vmid": vmid, "full": '1' if full else '0'}
         if name is not None:
             kwargs["name"] = name
@@ -237,7 +236,6 @@ class SimpleProxmoxManager:
         :param target: New node ID (optional)
         :return: ID of cloning task
         """
-        # TODO
         kwargs = {"newid": newid, "node": node, "vmid": vmid, "full": '1' if full else '0'}
         if hostname is not None:
             kwargs["hostname"] = hostname

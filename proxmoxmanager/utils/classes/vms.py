@@ -46,6 +46,24 @@ class ProxmoxVM:
         """
         return self.get_config()["template"] == 1
 
+    def clone(self, newid: str, newnode: Union[str, ProxmoxNode] = None, name: str = None, full: bool = True) -> str:
+        """
+        Clone virtual machine
+        :param newid: ID of new VM
+        :param newnode: New node ID or ProxmoxNode object (optional)
+        :param name: Name of new VM (optional)
+        :param full: Whether to make storage unlinked (optional, default=True)
+        :return: ID of cloning task
+        """
+        kwargs = {"newid": newid, "node": self._node, "vmid": self._vmid, "full": '1' if full else '0'}
+        if newnode is not None:
+            if isinstance(newnode, ProxmoxNode):
+                newnode = newnode.id
+            kwargs["target"] = newnode
+        if name is not None:
+            kwargs["name"] = name
+        return self._api.clone_vm(**kwargs)
+
     def delete(self) -> str:
         """
         Delete this VM
