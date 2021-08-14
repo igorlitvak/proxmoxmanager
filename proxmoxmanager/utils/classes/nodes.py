@@ -44,12 +44,15 @@ class ProxmoxNodeDict:
         self._nodes: Dict[str, ProxmoxNode] = {}
 
     def keys(self):
+        self._get_nodes()
         return self._nodes.keys()
 
     def values(self):
+        self._get_nodes()
         return self._nodes.values()
 
     def items(self):
+        self._get_nodes()
         return self._nodes.items()
 
     def choose_at_random(self, online_only: bool = True) -> ProxmoxNode:
@@ -85,12 +88,15 @@ class ProxmoxNodeDict:
         return best_node
 
     def __len__(self):
+        self._get_nodes()
         return len(self._nodes)
 
     def __getitem__(self, key: str) -> ProxmoxNode:
+        self._get_nodes()
         return self._nodes[key]
 
     def __repr__(self):
+        self._get_nodes()
         return f"<{self.__class__.__name__}: {repr(self._nodes)}>"
 
     def _get_nodes(self):
