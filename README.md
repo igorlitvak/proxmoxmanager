@@ -81,35 +81,35 @@ proxmox_manager.vms
 
 Accessing specific VM:
 ```python
-proxmox_manager.vms["vm_id"]
+proxmox_manager.vms["100"]
 ```
 
 Check if VM is a template:
 ```python
-proxmox_manager.vms["vm_id"].is_template()
+proxmox_manager.vms["100"].is_template()
 ```
 
 Start VM:
 ```python
-proxmox_manager.vms["vm_id"].start()
+proxmox_manager.vms["100"].start()
 ```
 
 Shutdown VM with timeout of 10 seconds after which it will be stopped by force:
 ```python
-proxmox_manager.vms["vm_id"].start(timeout=10)
+proxmox_manager.vms["100"].start(timeout=10)
 ```
 
 Add permission for user to use this VM:
 ```python
-proxmox_manager.vms["vm_id"].add_permission(user="username", role="SomeRoleName")
+proxmox_manager.vms["100"].add_permission(user="username", role="SomeRoleName")
 ```
 
 Clone VM to node with most free memory:
 ```python
-proxmox_manager.vms["vm_id"].clone(newid="new_vm_id", newnode=proxmox_manager.nodes.choose_by_most_free_ram())
+proxmox_manager.vms["100"].clone(newid="101", newnode=proxmox_manager.nodes.choose_by_most_free_ram())
 ```
 
 Delete VM:
 ```python
-proxmox_manager.vms["vm_id"].delete()
+proxmox_manager.vms["100"].delete()
 ```
