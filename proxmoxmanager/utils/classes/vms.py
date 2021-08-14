@@ -190,6 +190,15 @@ class ProxmoxVMDict:
         self._get_vms()
         return self._vms.items()
 
+    def remove(self, vmid: str) -> None:
+        """
+        Remove VM by ID
+        :param vmid: VM ID
+        :return: None
+        """
+        self._get_vms()
+        self._vms[vmid].delete()
+
     def __len__(self):
         self._get_vms()
         return len(self._vms)

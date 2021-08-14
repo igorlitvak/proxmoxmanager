@@ -176,6 +176,15 @@ class ProxmoxContainerDict:
         self._get_containers()
         return self._containers.items()
 
+    def remove(self, vmid: str) -> None:
+        """
+        Remove container by ID
+        :param vmid: Container ID
+        :return: None
+        """
+        self._get_containers()
+        self._containers[vmid].delete()
+
     def __len__(self):
         self._get_containers()
         return len(self._containers)
