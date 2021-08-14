@@ -1,6 +1,6 @@
 from ..api import APIWrapper
 from proxmoxer import ProxmoxAPI
-from typing import Tuple, Dict, List, Any
+from typing import Tuple, Dict, Any
 
 
 class ProxmoxUser:

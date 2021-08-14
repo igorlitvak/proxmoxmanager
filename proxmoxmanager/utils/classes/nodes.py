@@ -1,6 +1,6 @@
 from ..api import APIWrapper
 from .errors import ProxmoxException
-from typing import List, Dict, Any
+from typing import Dict, Any
 from random import choice
 
 
