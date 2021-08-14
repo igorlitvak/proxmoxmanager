@@ -54,6 +54,9 @@ class ProxmoxUser:
     def __str__(self):
         return self._userid
 
+    def __eq__(self, other: 'ProxmoxUser'):
+        return self._userid == other._userid
+
 
 class ProxmoxUserDict:
     def __init__(self, api: APIWrapper):

@@ -29,13 +29,16 @@ class ProxmoxNode:
         Get detailed status info about this node
         :return: Node info in JSON-like format
         """
-        return self._api.get_node_status(self._node)
+        return self._api.get_node_status(node=self._node)
 
     def __repr__(self):
         return f"<{self.__class__.__name__}: {self._node}>"
 
     def __str__(self):
         return self._node
+
+    def __eq__(self, other: 'ProxmoxNode'):
+        return self._node == other._node
 
 
 class ProxmoxNodeDict:

@@ -189,6 +189,9 @@ class ProxmoxVM:
     def __str__(self):
         return self._vmid
 
+    def __eq__(self, other: 'ProxmoxVM'):
+        return self._vmid == other._vmid and self._node == other._node
+
 
 class ProxmoxVMDict:
     def __init__(self, api: APIWrapper):
