@@ -21,7 +21,6 @@ class ProxmoxNode:
         Check if node is currently online
         :return: True/False
         """
-        # TODO: probably could be done with get_status_report
         resp = self._api.list_nodes()
         return any(elem["node"] == self._node for elem in resp if elem["status"] == "online")
 

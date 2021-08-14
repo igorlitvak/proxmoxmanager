@@ -132,7 +132,6 @@ class ProxmoxContainer:
         Get a list of users with permissions for this container and their roles
         :return: List of tuples of ProxmoxUser objects and string names of roles
         """
-        # TODO: maybe need to show if permission is enabled
         path = "/vms/" + self._vmid
         resp = self._api.get_access_control_list()
         return [(ProxmoxUser(self._api, el["ugid"].split("@")[0]), el["roleid"]) for el in resp if

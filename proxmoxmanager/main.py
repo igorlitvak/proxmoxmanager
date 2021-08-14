@@ -12,9 +12,7 @@ class ProxmoxManager:
     """
 
     def __init__(self, host: str, user: str, token_name: str, token_value: str):
-        # self._host = host
         self._api = APIWrapper(host=host, user=user, token_name=token_name, token_value=token_value)
-        # self._logger = logging.getLogger(__name__)
 
     @property
     def nodes(self):
