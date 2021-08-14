@@ -162,29 +162,35 @@ class ProxmoxContainer:
 class ProxmoxContainerDict:
     def __init__(self, api: APIWrapper):
         self._api = api
-        self._containers: Dict[str, ProxmoxContainer] = {cont.id: cont for cont in self._get_containers()}
+        self._containers: Dict[str, ProxmoxContainer] = {}
 
     def keys(self):
+        self._get_containers()
         return self._containers.keys()
 
     def values(self):
+        self._get_containers()
         return self._containers.values()
 
     def items(self):
+        self._get_containers()
         return self._containers.items()
 
     def __len__(self):
+        self._get_containers()
         return len(self._containers)
 
     def __getitem__(self, key: str) -> ProxmoxContainer:
+        self._get_containers()
         return self._containers[key]
 
     def __repr__(self):
+        self._get_containers()
         return f"<{self.__class__.__name__}: {repr(self._containers)}>"
 
-    def _get_containers(self) -> List[ProxmoxContainer]:
+    def _get_containers(self):
         containers = []
         for node in ProxmoxNodeDict(self._api).keys():
             resp = self._api.list_containers(node)
             containers += [ProxmoxContainer(self._api, cont["vmid"], node) for cont in resp]
-        return containers
+        self._containers = {cont.id: cont for cont in containers}

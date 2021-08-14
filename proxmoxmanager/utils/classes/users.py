@@ -49,15 +49,18 @@ class ProxmoxUser:
 class ProxmoxUserDict:
     def __init__(self, api: APIWrapper):
         self._api = api
-        self._users: Dict[str, ProxmoxUser] = {user.id: user for user in self._get_users()}
+        self._users: Dict[str, ProxmoxUser] = {}
 
     def keys(self):
+        self._get_users()
         return self._users.keys()
 
     def values(self):
+        self._get_users()
         return self._users.values()
 
     def items(self):
+        self._get_users()
         return self._users.items()
 
     def create(self, user: str, password: str, **kwargs) -> ProxmoxUser:
@@ -68,6 +71,7 @@ class ProxmoxUserDict:
         :param kwargs: Other arguments passed to Proxmox API (comment, firstname, lastname, email...)
         :return: ProxmoxUser object for newly created user
         """
+        self._get_users()
         if user in self._users.keys():
             raise ValueError(f"User {user} already exists")
         if len(password) < 5:
@@ -81,19 +85,24 @@ class ProxmoxUserDict:
         :param user: User ID
         :return: None
         """
+        self._get_users()
         self._users[user].delete()
 
     def __len__(self):
+        self._get_users()
         return len(self._users)
 
     def __getitem__(self, key: str) -> ProxmoxUser:
+        self._get_users()
         return self._users[key]
 
     def __repr__(self):
+        self._get_users()
         return f"<{self.__class__.__name__}: {repr(self._users)}>"
 
-    def _get_users(self) -> List[ProxmoxUser]:
+    def _get_users(self):
         resp = self._api.list_users()
         # Only users in @pve realm will be returned
         userid_list = [el["userid"][:el["userid"].rindex("@")] for el in resp if el["userid"].split("@")[-1] == "pve"]
-        return [ProxmoxUser(self._api, userid) for userid in userid_list]
+        users = [ProxmoxUser(self._api, userid) for userid in userid_list]
+        self._users: Dict[str, ProxmoxUser] = {user.id: user for user in users}

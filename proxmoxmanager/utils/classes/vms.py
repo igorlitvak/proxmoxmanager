@@ -176,29 +176,35 @@ class ProxmoxVM:
 class ProxmoxVMDict:
     def __init__(self, api: APIWrapper):
         self._api = api
-        self._vms: Dict[str, ProxmoxVM] = {vm.id: vm for vm in self._get_vms()}
+        self._vms: Dict[str, ProxmoxVM] = {}
 
     def keys(self):
+        self._get_vms()
         return self._vms.keys()
 
     def values(self):
+        self._get_vms()
         return self._vms.values()
 
     def items(self):
+        self._get_vms()
         return self._vms.items()
 
     def __len__(self):
+        self._get_vms()
         return len(self._vms)
 
     def __getitem__(self, key: str) -> ProxmoxVM:
+        self._get_vms()
         return self._vms[key]
 
     def __repr__(self):
+        self._get_vms()
         return f"<{self.__class__.__name__}: {repr(self._vms)}>"
 
-    def _get_vms(self) -> List[ProxmoxVM]:
+    def _get_vms(self):
         vms = []
         for node in ProxmoxNodeDict(self._api).keys():
             resp = self._api.list_vms(node)
             vms += [ProxmoxVM(self._api, vm["vmid"], node) for vm in resp]
-        return vms
+        self._vms = {vm.id: vm for vm in vms}

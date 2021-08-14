@@ -42,7 +42,7 @@ class ProxmoxNode:
 class ProxmoxNodeDict:
     def __init__(self, api: APIWrapper):
         self._api = api
-        self._nodes: Dict[str, ProxmoxNode] = {node.id: node for node in self._get_nodes()}
+        self._nodes: Dict[str, ProxmoxNode] = {}
 
     def keys(self):
         return self._nodes.keys()
@@ -94,6 +94,7 @@ class ProxmoxNodeDict:
     def __repr__(self):
         return f"<{self.__class__.__name__}: {repr(self._nodes)}>"
 
-    def _get_nodes(self) -> List[ProxmoxNode]:
+    def _get_nodes(self):
         resp = self._api.list_nodes()
-        return [ProxmoxNode(self._api, elem["node"]) for elem in resp]
+        nodes = [ProxmoxNode(self._api, elem["node"]) for elem in resp]
+        self._nodes: Dict[str, ProxmoxNode] = {node.id: node for node in nodes}
