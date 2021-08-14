@@ -57,5 +57,6 @@ class ProxmoxUserDict:
     def _get_users(self) -> List[ProxmoxUser]:
         resp = self._api.list_users()
         # Only users in @pve realm will be returned
-        userid_list = [elem["userid"].split("@")[0] for elem in resp if elem["userid"].split("@")[1] == "pve"]
+        userid_list = [elem["userid"][:elem["userid"].rindex("@")] for elem in resp if
+                       elem["userid"].split("@")[-1] == "pve"]
         return [ProxmoxUser(self._api, userid) for userid in userid_list]
