@@ -74,6 +74,15 @@ class TestProxmoxContainer(unittest.TestCase):
             target_method.assert_called_once_with(path="/vms/" + self.VMID, roles="Role", users="foo@pve", delete="1",
                                                   propagate="0")
 
+    def test_remove_all_permissions(self):
+        return_value = [{"ugid": "foo@pve", "roleid": "Role1", "path": "/vms/100", "type": "user"},
+                        {"ugid": "bar@pve", "roleid": "Role2", "path": "/vms/100", "type": "user"}]
+        with patch.object(APIWrapper, "get_access_control_list", return_value=return_value) as target_method1, \
+                patch.object(ProxmoxContainer, "remove_permission") as target_method2:
+            self.assertEqual(None, self.container.remove_all_permissions())
+            target_method1.assert_called_once_with()
+            self.assertEqual(2, target_method2.call_count)
+
     # TODO: write more tests
 
 
