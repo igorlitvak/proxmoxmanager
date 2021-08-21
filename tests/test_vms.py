@@ -40,7 +40,42 @@ class TestProxmoxVM(unittest.TestCase):
             self.assertFalse(self.vm.is_template())
             target_method.assert_called_once_with(vmid=self.VMID, node=self.NODE_NAME)
 
+    def test_view_permissions(self):
+        return_value = [{"ugid": "foo@pve", "roleid": "Role1", "path": "/vms/100", "type": "user"},
+                        {"ugid": "bar@pve", "roleid": "Role2", "path": "/vms/100", "type": "user"}]
+        with patch.object(APIWrapper, "get_access_control_list", return_value=return_value) as target_method:
+            perm = self.vm.view_permissions()
+            self.assertEqual(2, len(perm))
+            self.assertEqual("foo", perm[0][0].id)
+            self.assertEqual("Role1", perm[0][1])
+            self.assertEqual("bar", perm[1][0].id)
+            self.assertEqual("Role2", perm[1][1])
+            target_method.assert_called_once_with()
+
+    def test_view_permissions_other_data(self):
+        return_value = [{"ugid": "foo@pve", "roleid": "Role", "path": "/vms/101", "type": "user"},
+                        {"ugid": "root@pam", "roleid": "Role", "path": "/vms/100", "type": "user"},
+                        {"ugid": "token1", "roleid": "Role", "path": "/vms/100", "type": "token"},
+                        {"ugid": "foo@pve", "roleid": "Role", "path": "/vms", "type": "user"},
+                        {"ugid": "foo@pve", "roleid": "Role", "path": "/nodes/100", "type": "user"}]
+        with patch.object(APIWrapper, "get_access_control_list", return_value=return_value) as target_method:
+            self.assertEqual([], self.vm.view_permissions())
+            target_method.assert_called_once_with()
+
+    def test_add_permission(self):
+        with patch.object(APIWrapper, "update_access_control_list") as target_method:
+            self.vm.add_permission(user="foo", role="Role")
+            target_method.assert_called_once_with(path="/vms/" + self.VMID, roles="Role", users="foo@pve", delete="0",
+                                                  propagate="0")
+
+    def test_remove_permission(self):
+        with patch.object(APIWrapper, "update_access_control_list") as target_method:
+            self.vm.remove_permission(user="foo", role="Role")
+            target_method.assert_called_once_with(path="/vms/" + self.VMID, roles="Role", users="foo@pve", delete="1",
+                                                  propagate="0")
+
     # TODO: write more tests
+
 
 # TODO: test ProxmoxVMDict
 
