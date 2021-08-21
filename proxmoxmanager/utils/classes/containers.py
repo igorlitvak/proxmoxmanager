@@ -24,6 +24,8 @@ class ProxmoxContainer:
         """
         return ProxmoxNode(self._api, self._node)
 
+    # TODO: add running() method
+
     def get_status_report(self) -> Dict[str, Any]:
         """
         Get detailed status info about this container
