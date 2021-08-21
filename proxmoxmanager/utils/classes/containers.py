@@ -45,7 +45,8 @@ class ProxmoxContainer:
         Whether this container is a template
         :return: True/False
         """
-        return self.get_config()["template"] == 1
+        config = self.get_config()
+        return "template" in config.keys() and config["template"] == 1
 
     def clone(self, newid: str, newnode: Union[str, ProxmoxNode] = None, name: str = None, full: bool = True) -> str:
         """
