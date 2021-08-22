@@ -1,1 +1,1 @@
-from .main import ProxmoxManager, SimpleProxmoxManager
+from .main import ProxmoxManager
