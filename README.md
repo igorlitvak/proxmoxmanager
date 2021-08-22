@@ -7,7 +7,9 @@ ProxmoxManager is based on [proxmoxer](https://github.com/proxmoxer/proxmoxer) l
 Required version of Python: >=3.8
 
 ## Installation
-Will be added to PyPi soon
+```shell
+pip install proxmoxmanager
+```
 
 ## Use
 ProxmoxManager library features a ProxmoxManager class that contains all of the library's functionality. To start using it, you will need to generate public and private API keys with root access.
