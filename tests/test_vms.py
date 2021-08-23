@@ -52,6 +52,61 @@ class TestProxmoxVM(unittest.TestCase):
             self.assertFalse(self.vm.is_template())
             target_method.assert_called_once_with(vmid=self.VMID, node=self.NODE_NAME)
 
+    def test_clone(self):
+        return_value = "TASKID"
+        with patch.object(APIWrapper, "clone_vm", return_value=return_value) as target_method:
+            self.assertEqual(return_value, self.vm.clone(newid="101", newnode="other_node_name", name="foo"))
+            target_method.assert_called_once_with(newid="101", node=self.NODE_NAME, vmid=self.VMID, full="1",
+                                                  name="foo", target="other_node_name")
+
+    def test_delete(self):
+        return_value = "TASKID"
+        with patch.object(APIWrapper, "delete_vm", return_value=return_value) as target_method:
+            self.assertEqual(return_value, self.vm.delete())
+            target_method.assert_called_once_with(node=self.NODE_NAME, vmid=self.VMID)
+
+    def test_start(self):
+        return_value = "TASKID"
+        with patch.object(APIWrapper, "start_vm", return_value=return_value) as target_method:
+            self.assertEqual(self.vm.start(timeout=10), return_value)
+            target_method.assert_called_once_with(node=self.NODE_NAME, vmid=self.VMID, timeout="10")
+
+    def test_stop(self):
+        return_value = "TASKID"
+        with patch.object(APIWrapper, "stop_vm", return_value=return_value) as target_method:
+            self.assertEqual(self.vm.stop(timeout=10), return_value)
+            target_method.assert_called_once_with(node=self.NODE_NAME, vmid=self.VMID, timeout="10")
+
+    def test_shutdown(self):
+        return_value = "TASKID"
+        with patch.object(APIWrapper, "shutdown_vm", return_value=return_value) as target_method:
+            self.assertEqual(self.vm.shutdown(timeout=10), return_value)
+            target_method.assert_called_once_with(node=self.NODE_NAME, vmid=self.VMID, timeout="10", forceStop="1")
+
+    def test_reset(self):
+        return_value = "TASKID"
+        with patch.object(APIWrapper, "reset_vm", return_value=return_value) as target_method:
+            self.assertEqual(self.vm.reset(), return_value)
+            target_method.assert_called_once_with(node=self.NODE_NAME, vmid=self.VMID)
+
+    def test_reboot(self):
+        return_value = "TASKID"
+        with patch.object(APIWrapper, "reboot_vm", return_value=return_value) as target_method:
+            self.assertEqual(self.vm.reboot(timeout=10), return_value)
+            target_method.assert_called_once_with(node=self.NODE_NAME, vmid=self.VMID, timeout="10")
+
+    def test_suspend(self):
+        return_value = "TASKID"
+        with patch.object(APIWrapper, "suspend_vm", return_value=return_value) as target_method:
+            self.assertEqual(self.vm.suspend(), return_value)
+            target_method.assert_called_once_with(node=self.NODE_NAME, vmid=self.VMID, todisk="0")
+
+    def test_resume(self):
+        return_value = "TASKID"
+        with patch.object(APIWrapper, "resume_vm", return_value=return_value) as target_method:
+            self.assertEqual(self.vm.resume(), return_value)
+            target_method.assert_called_once_with(node=self.NODE_NAME, vmid=self.VMID)
+
     def test_view_permissions(self):
         return_value = [{"ugid": "foo@pve", "roleid": "Role1", "path": "/vms/100", "type": "user"},
                         {"ugid": "bar@pve", "roleid": "Role2", "path": "/vms/100", "type": "user"}]
@@ -94,8 +149,6 @@ class TestProxmoxVM(unittest.TestCase):
             self.assertEqual(None, self.vm.remove_all_permissions())
             target_method1.assert_called_once_with()
             self.assertEqual(2, target_method2.call_count)
-
-    # TODO: write more tests
 
 
 # TODO: test ProxmoxVMDict
