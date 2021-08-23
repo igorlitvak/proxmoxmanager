@@ -55,3 +55,21 @@ class ProxmoxManager:
         :return: List of string role names
         """
         return [role["roleid"] for role in self.list_roles()]
+
+    def smallest_free_vmid(self) -> str:
+        """
+        Get smallest VM/container ID that is not taken
+        :return: ID in string format
+        """
+        # TODO: test it
+        vmids = list(self.vms.keys())
+        vmids += list(self.containers.keys())
+        vmids.sort()
+        # TODO: maybe it is better to use some fancy algorithm
+        res = 100
+        for vmid in vmids:
+            if vmid == str(res):
+                res += 1
+            else:
+                return str(res)
+        return str(res)
