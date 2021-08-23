@@ -14,7 +14,7 @@ setup(
     name="proxmoxmanager",
 
     # Current version
-    version="1.0.1",
+    version="1.0.2",
 
     # Short description
     description="Smart Proxmox VE API wrapper for automatically managing resources",
