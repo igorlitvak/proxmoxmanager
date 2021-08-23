@@ -6,6 +6,7 @@ def return_default_on_exception(default_value: Any = None,
                                 with_args: Sequence = None,
                                 with_fields: Dict[str, Any] = None):
     """
+    ### DEVELOPMENT OF THIS DECORATOR WAS ABANDONED AND IT SHOULDN'T BE USED IN CURRENT FORM ###
     Custom decorator that catches exceptions from function and returns some default value
     :param default_value: Any value to return if exception was caught (None by default)
     :param catch_errors: Types of errors to be caught (any exception by default)
@@ -35,6 +36,7 @@ def reraise_exception_on_exception(new_error: Exception,
                                    with_args: Sequence = None,
                                    with_fields: Dict[str, Any] = None):
     """
+    ### DEVELOPMENT OF THIS DECORATOR WAS ABANDONED AND IT SHOULDN'T BE USED IN CURRENT FORM ###
     Custom decorator that catches exceptions from function and reraises other exception
     :param new_error: Which exception must be raised
     :param catch_errors: Types of errors to be caught (any exception by default)
