@@ -17,7 +17,7 @@ setup(
     version="1.0.2",
 
     # Short description
-    description="Smart Proxmox VE API wrapper for automatically managing resources",
+    description="Smart Proxmox VE API wrapper for managing resources automatically",
 
     # Long description
     long_description=long_description,

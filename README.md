@@ -11,8 +11,35 @@ Required version of Python: >=3.8
 pip install proxmoxmanager
 ```
 
+## Useful info
+Proxmox VE is a virtualization platfrom that supports both containers and virtual machines.
+
+### Nodes
+Node is a real computer on which Proxmox runs. Proxmox can run on multiple nodes which are united into cluster.
+
+Each node has it's own unique string ID.
+
+### Users
+Proxmox VE has a complex user and permission system. There are two realms in which users are created: PAM (build-in Linux authentication, primarily used for root user) and PVE (Proxmox VE authentication).
+
+This library only supports PVE users, because not all API features are availible via API.
+
+Usernames are unique string values in format `username@pam` or `username@pve`. Because this library only supports PVE realm, `@pve` is appended automatically to usernames.
+
+Users are NOT linked to specific nodes, and they can have access to any VMs/containers.
+
+### Permissions
+Each user has a set of permissions, which consist of a path (e.g., `/vms/100`) and a permission name (e.g. `Administrator`). Each role itself contains a set of permissions.
+
+Proxmox allows to give root permissions (with path `/`) or permissions to all VMs/containers (with path like `/vms`), but this library for the sake of simplicity only allows to give permissions for specific user to specific VM/container.
+
+### Virtual machines and containers
+Each VM/container is located on it's own node and has a unique integer id (100-99999999), which has to be unique for ALL the nodes.
+
+This library allows to pass VM/container IDs both as integers and strings, but internally they are always hadnled as strings for the sake of simplicity.
+
 ## Use
-ProxmoxManager library features a ProxmoxManager class that contains all of the library's functionality. To start using it, you will need to generate public and private API keys with root access.
+ProxmoxManager library features a ProxmoxManager class that contains all of the library's functionality. To start using it, you will need to generate API key with root access and full permissions.
 
 Creating `ProxmoxManager` instance:
 ```python
@@ -84,6 +111,11 @@ proxmox_manager.vms
 Accessing specific VM:
 ```python
 proxmox_manager.vms["100"]
+```
+
+It can also be accesed by integer ID:
+```python
+proxmox_manager.vms[100]
 ```
 
 Check if VM is a template:
