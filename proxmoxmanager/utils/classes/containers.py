@@ -60,7 +60,7 @@ class ProxmoxContainer:
         :param newid: ID of new LXC
         :param newnode: New node ID or ProxmoxNode object (optional)
         :param name: Name of new LXC (optional)
-        :param full: Whether to make storage unlinked (optional, default=True)
+        :param full: Whether to make storage unlinked (note that linked might not be supported) (optional, default=True)
         :return: ID of cloning task
         """
         kwargs = {"newid": newid, "node": self._node, "vmid": self._vmid, "full": '1' if full else '0'}
