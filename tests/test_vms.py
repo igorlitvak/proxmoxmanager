@@ -59,6 +59,17 @@ class TestProxmoxVM(unittest.TestCase):
             target_method.assert_called_once_with(newid="101", node=self.NODE_NAME, vmid=self.VMID, full="1",
                                                   name="foo", target="other_node_name")
 
+    def test_clone_id_not_int(self):
+        self.assertRaises(ValueError, self.vm.clone, newid="foo")
+
+    def test_clone_id_too_small(self):
+        self.assertRaises(ValueError, self.vm.clone, newid=99)
+        self.assertRaises(ValueError, self.vm.clone, newid="99")
+
+    def test_clone_id_too_big(self):
+        self.assertRaises(ValueError, self.vm.clone, newid=1_000_000_000)
+        self.assertRaises(ValueError, self.vm.clone, newid="1000000000")
+
     def test_delete(self):
         return_value = "TASKID"
         with patch.object(APIWrapper, "delete_vm", return_value=return_value) as target_method:
