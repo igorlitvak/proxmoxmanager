@@ -25,8 +25,6 @@ class ProxmoxVM:
         """
         return ProxmoxNode(self._api, self._node)
 
-    # TODO: add running() method
-
     def get_status_report(self) -> Dict[str, Any]:
         """
         Get detailed status info about this VM
@@ -40,6 +38,14 @@ class ProxmoxVM:
         :return: VM config in JSON-like format
         """
         return self._api.get_vm_config(node=self._node, vmid=self._vmid)
+
+    def running(self) -> bool:
+        """
+        Whether VM is currently running
+        :return: True/False
+        """
+        config = self.get_status_report()
+        return "status" in config.keys() and config["status"] == "running"
 
     def is_template(self) -> bool:
         """

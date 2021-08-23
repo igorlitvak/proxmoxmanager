@@ -22,7 +22,8 @@ class ProxmoxNode:
         :return: True/False
         """
         resp = self._api.list_nodes()
-        return any(elem["node"] == self._node for elem in resp if elem["status"] == "online")
+        return any(
+            elem["node"] == self._node for elem in resp if "status" in elem.keys() and elem["status"] == "online")
 
     def get_status_report(self) -> Dict[str, Any]:
         """

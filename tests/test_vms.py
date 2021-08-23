@@ -28,6 +28,18 @@ class TestProxmoxVM(unittest.TestCase):
             self.assertEqual(return_value, self.vm.get_config())
             target_method.assert_called_once_with(vmid=self.VMID, node=self.NODE_NAME)
 
+    def test_running_true(self):
+        return_value = {"status": "running", "maxdisk": 1000000, "maxmem": 100000}
+        with patch.object(APIWrapper, "get_vm_status", return_value=return_value) as target_method:
+            self.assertTrue(self.vm.running())
+            target_method.assert_called_once_with(vmid=self.VMID, node=self.NODE_NAME)
+
+    def test_running_false(self):
+        return_value = {"status": "stopped", "maxdisk": 1000000, "maxmem": 100000}
+        with patch.object(APIWrapper, "get_vm_status", return_value=return_value) as target_method:
+            self.assertFalse(self.vm.running())
+            target_method.assert_called_once_with(vmid=self.VMID, node=self.NODE_NAME)
+
     def test_is_template_true(self):
         return_value = {"name": "foo", "cores": 4, "memory": 1024, "template": 1}
         with patch.object(APIWrapper, "get_vm_config", return_value=return_value) as target_method:
