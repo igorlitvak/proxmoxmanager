@@ -35,7 +35,7 @@ setup(
     packages=find_packages(),
 
     # Which Python version is required to run this project
-    python_requires=">=3.8, <4",  # TODO: test on earlier versions
+    python_requires=">=3.7, <4",
 
     # Which external projects this project depends on
     install_requires=[
@@ -48,6 +48,9 @@ setup(
         "Development Status :: 4 - Beta",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.8"
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10"
     ],
 )
