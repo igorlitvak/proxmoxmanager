@@ -236,6 +236,10 @@ class ProxmoxVMDict:
         self._get_vms()
         return self._vms[key]
 
+    def __iter__(self):
+        self._get_vms()
+        return iter(self._vms)
+
     def __repr__(self):
         self._get_vms()
         return f"<{self.__class__.__name__}: {repr(self._vms)}>"

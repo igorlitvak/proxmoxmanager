@@ -108,6 +108,10 @@ class ProxmoxUserDict:
         self._get_users()
         return self._users[key]
 
+    def __iter__(self):
+        self._get_users()
+        return iter(self._users)
+
     def __repr__(self):
         self._get_users()
         return f"<{self.__class__.__name__}: {repr(self._users)}>"

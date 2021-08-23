@@ -99,6 +99,10 @@ class ProxmoxNodeDict:
         self._get_nodes()
         return self._nodes[key]
 
+    def __iter__(self):
+        self._get_nodes()
+        return iter(self._nodes)
+
     def __repr__(self):
         self._get_nodes()
         return f"<{self.__class__.__name__}: {repr(self._nodes)}>"

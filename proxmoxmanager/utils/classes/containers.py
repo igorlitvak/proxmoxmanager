@@ -222,6 +222,10 @@ class ProxmoxContainerDict:
         self._get_containers()
         return self._containers[key]
 
+    def __iter__(self):
+        self._get_containers()
+        return iter(self._containers)
+
     def __repr__(self):
         self._get_containers()
         return f"<{self.__class__.__name__}: {repr(self._containers)}>"
