@@ -1,4 +1,5 @@
 from proxmoxmanager.utils import APIWrapper, ProxmoxNodeDict, ProxmoxUserDict, ProxmoxVMDict, ProxmoxContainerDict
+from typing import List, Dict, Any
 
 
 class ProxmoxManager:
@@ -40,3 +41,17 @@ class ProxmoxManager:
         :return: Dict-like object containing containers
         """
         return ProxmoxContainerDict(self._api)
+
+    def list_roles(self) -> List[Dict[str, Any]]:
+        """
+        Get list of availible roles
+        :return: List of roles' info in JSON-like format
+        """
+        return self._api.list_roles()
+
+    def list_role_names(self):
+        """
+        Get list of names of avalible roles (without any other info)
+        :return: List of string role names
+        """
+        return [role["roleid"] for role in self.list_roles()]
