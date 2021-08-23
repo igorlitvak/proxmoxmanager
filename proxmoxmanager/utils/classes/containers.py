@@ -54,15 +54,23 @@ class ProxmoxContainer:
         config = self.get_config()
         return "template" in config.keys() and config["template"] == 1
 
-    def clone(self, newid: str, newnode: Union[str, ProxmoxNode] = None, name: str = None, full: bool = True) -> str:
+    def clone(self, newid: Union[str, int], newnode: Union[str, ProxmoxNode] = None, name: str = None,
+              full: bool = True) -> str:
         """
         Clone LXC container
-        :param newid: ID of new LXC
+        :param newid: ID of new LXC (integer number 100-999999999)
         :param newnode: New node ID or ProxmoxNode object (optional)
         :param name: Name of new LXC (optional)
         :param full: Whether to make storage unlinked (note that linked might not be supported) (optional, default=True)
         :return: ID of cloning task
         """
+        try:
+            newid = int(newid)
+        except ValueError:
+            raise ValueError("ID of container should be an integer between 100 and 999999999")
+        if newid < 100 or newid > 999_999_999:
+            raise ValueError("ID of container should be an integer between 100 and 999999999")
+        newid = str(newid)
         kwargs = {"newid": newid, "node": self._node, "vmid": self._vmid, "full": '1' if full else '0'}
         if newnode is not None:
             if isinstance(newnode, ProxmoxNode):
@@ -205,12 +213,13 @@ class ProxmoxContainerDict:
         self._get_containers()
         return self._containers.items()
 
-    def remove(self, vmid: str) -> None:
+    def remove(self, vmid: Union[str, int]) -> None:
         """
         Remove container by ID
         :param vmid: Container ID
         :return: None
         """
+        vmid = str(vmid)
         self._get_containers()
         self._containers[vmid].delete()
 
@@ -218,7 +227,8 @@ class ProxmoxContainerDict:
         self._get_containers()
         return len(self._containers)
 
-    def __getitem__(self, key: str) -> ProxmoxContainer:
+    def __getitem__(self, key: Union[str, int]) -> ProxmoxContainer:
+        key = str(key)
         self._get_containers()
         return self._containers[key]
 

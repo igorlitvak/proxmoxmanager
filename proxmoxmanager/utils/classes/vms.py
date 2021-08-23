@@ -55,15 +55,23 @@ class ProxmoxVM:
         config = self.get_config()
         return "template" in config.keys() and config["template"] == 1
 
-    def clone(self, newid: str, newnode: Union[str, ProxmoxNode] = None, name: str = None, full: bool = True) -> str:
+    def clone(self, newid: Union[str, int], newnode: Union[str, ProxmoxNode] = None, name: str = None,
+              full: bool = True) -> str:
         """
         Clone virtual machine
-        :param newid: ID of new VM
+        :param newid: ID of new VM (integer number 100-999999999)
         :param newnode: New node ID or ProxmoxNode object (optional)
         :param name: Name of new VM (optional)
         :param full: Whether to make storage unlinked (note that linked might not be supported) (optional, default=True)
         :return: ID of cloning task
         """
+        try:
+            newid = int(newid)
+        except ValueError:
+            raise ValueError("ID of VM should be an integer between 100 and 999999999")
+        if newid < 100 or newid > 999_999_999:
+            raise ValueError("ID of VM should be an integer between 100 and 999999999")
+        newid = str(newid)
         kwargs = {"newid": newid, "node": self._node, "vmid": self._vmid, "full": '1' if full else '0'}
         if newnode is not None:
             if isinstance(newnode, ProxmoxNode):
@@ -219,12 +227,13 @@ class ProxmoxVMDict:
         self._get_vms()
         return self._vms.items()
 
-    def remove(self, vmid: str) -> None:
+    def remove(self, vmid: Union[str, int]) -> None:
         """
         Remove VM by ID
         :param vmid: VM ID
         :return: None
         """
+        vmid = str(vmid)
         self._get_vms()
         self._vms[vmid].delete()
 
@@ -232,7 +241,8 @@ class ProxmoxVMDict:
         self._get_vms()
         return len(self._vms)
 
-    def __getitem__(self, key: str) -> ProxmoxVM:
+    def __getitem__(self, key: Union[str, int]) -> ProxmoxVM:
+        key = str(key)
         self._get_vms()
         return self._vms[key]
 
