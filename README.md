@@ -34,7 +34,9 @@ Each user has a set of permissions, which consist of a path (e.g., `/vms/100`) a
 Proxmox allows to give root permissions (with path `/`) or permissions to all VMs/containers (with path like `/vms`), but this library for the sake of simplicity only allows to give permissions for specific user to specific VM/container.
 
 ### Virtual machines and containers
-Each VM/container is located on it's own node and has a unique integer id (100-99999999), which has to be unique for ALL the nodes.
+Each VM/container is located on it's own node and has a unique integer ID (100-99999999), which has to be unique for ALL the nodes.
+
+Despite being different objects, VMs and containers cannot share the same ID.
 
 This library allows to pass VM/container IDs both as integers and strings, but internally they are always hadnled as strings for the sake of simplicity.
 
@@ -137,6 +139,11 @@ proxmox_manager.vms["100"].start(timeout=10)
 Add permission for user to use this VM:
 ```python
 proxmox_manager.vms["100"].add_permission(user="username", role="SomeRoleName")
+```
+
+Clone VM to the same node and choose ID that is not taken:
+```python
+proxmox_manager.vms["100"].clone(newid=proxmox_manager.smallest_free_vmid())
 ```
 
 Clone VM to node with most free memory:
