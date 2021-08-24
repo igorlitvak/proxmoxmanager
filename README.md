@@ -22,7 +22,7 @@ Each node has it's own unique string ID.
 ### Users
 Proxmox VE has a complex user and permission system. There are two realms in which users are created: PAM (build-in Linux authentication, primarily used for root user) and PVE (Proxmox VE authentication).
 
-This library only supports PVE users, because not all API features are availible via API.
+This library only supports PVE users, because not all API features are availible for PAM users.
 
 Usernames are unique string values in format `username@pam` or `username@pve`. Because this library only supports PVE realm, `@pve` is appended automatically to usernames.
 
