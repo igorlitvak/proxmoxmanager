@@ -43,6 +43,7 @@ ProxmoxManager library features a ProxmoxManager class that contains all of the 
 
 Creating `ProxmoxManager` instance:
 ```python
+from proxmoxmanager import ProxmoxManager
 proxmox_manager = ProxmoxManager(host="example.com:8006", user="root@pam", token_name = "TOKEN_NAME", token_value = "SECRET_VALUE")
 ```
 
