@@ -244,5 +244,5 @@ class ProxmoxContainerDict:
         containers = []
         for node in ProxmoxNodeDict(self._api).keys():
             resp = self._api.list_containers(node)
-            containers += [ProxmoxContainer(self._api, cont["vmid"], node) for cont in resp]
+            containers += [ProxmoxContainer(self._api, str(cont["vmid"]), node) for cont in resp]
         self._containers = {cont.id: cont for cont in containers}

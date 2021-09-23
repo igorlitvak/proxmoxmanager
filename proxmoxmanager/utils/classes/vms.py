@@ -258,5 +258,5 @@ class ProxmoxVMDict:
         vms = []
         for node in ProxmoxNodeDict(self._api).keys():
             resp = self._api.list_vms(node)
-            vms += [ProxmoxVM(self._api, vm["vmid"], node) for vm in resp]
+            vms += [ProxmoxVM(self._api, str(vm["vmid"]), node) for vm in resp]
         self._vms = {vm.id: vm for vm in vms}
