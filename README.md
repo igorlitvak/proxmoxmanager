@@ -4,7 +4,7 @@ ProxmoxManager is a smart Python wrapper for Proxmox VE API. It's purpose is to 
 
 ProxmoxManager is based on [proxmoxer](https://github.com/proxmoxer/proxmoxer) library and requires it as a dependency.
 
-Required version of Python: >=3.8
+Required version of Python: >=3.7
 
 ## Installation
 ```shell
