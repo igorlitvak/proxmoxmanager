@@ -59,18 +59,28 @@ class ProxmoxNodeDict:
         self._get_nodes()
         return self._nodes.items()
 
-    def choose_at_random(self, online_only: bool = True) -> ProxmoxNode:
+    def choose_at_random(self, online_only: bool = True,  nodes: List[ProxmoxNode] = None) -> ProxmoxNode:
         """
         Choose random node from list of availible nodes
         :param online_only: Only choose between nodes that are currently online (optional, default=True)
+        :param nodes: Only choose between a given list of nodes (optional)
         :return: ProxmoxNode object
         """
-        valid_choices = [node for node in self.values() if node.online or not online_only]
+        if nodes is None:
+            nodes = self.values()
+
+        valid_choices = [node for node in nodes if node.online or not online_only]
         if not valid_choices:
             raise ProxmoxException(f"No {'online ' if online_only else ''}nodes found")
         return choice(valid_choices)
 
-    def get_memory_info(self, nodes: List[ProxmoxNode]) -> List[Tuple[ProxmoxNode, float, float]]:
+    @staticmethod
+    def get_memory_info(nodes: List[ProxmoxNode]) -> List[Tuple[ProxmoxNode, float, float]]:
+        """
+        Get memory info for a specific list of nodes
+        :param nodes: list of ProxmoxNode objects
+        :return: A list of tuples (ProxmoxNode, [free memory (float)], [fraction of free memory (float)])
+        """
         result = []
 
         for node in nodes:
@@ -81,14 +91,18 @@ class ProxmoxNodeDict:
 
         return result
 
-    def choose_by_most_free_ram(self, absolute: bool = True, online_only: bool = True) -> ProxmoxNode:
+    def choose_by_most_free_ram(self, absolute: bool = True, online_only: bool = True, nodes: List[ProxmoxNode] = None) -> ProxmoxNode:
         """
         Choose from list of availible nodes with most free RAM
         :param absolute: Whether to rate free RAM in bytes or % (optional, default=True)
         :param online_only: Only choose between nodes that are currently online (optional, default=True)
+        :param nodes: Only choose between a given list of nodes (optional)
         :return: ProxmoxNode object
         """
-        valid_choices = [node for node in self.values() if node.online or not online_only]
+        if nodes is None:
+            nodes = self.values()
+
+        valid_choices = [node for node in nodes if node.online or not online_only]
         if not valid_choices:
             raise ProxmoxException(f"No {'online ' if online_only else ''}nodes found")
 
