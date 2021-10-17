@@ -1,6 +1,6 @@
 # ProxmoxManager
 ## Introduction
-ProxmoxManager is a smart Python wrapper for Proxmox VE API. It's purpose is to allow easy automatic management for many users with many virtual machines and LCX containers. The idea is that users from external website would unknowingly be registered in Proxmox environment, which will allow them to seamlessly use virtucal machines and containers.
+ProxmoxManager is a smart Python wrapper for Proxmox VE API. It's purpose is to allow easy automatic management for many users with many virtual machines and LXC containers. The idea is that users from external website would unknowingly be registered in Proxmox environment, which will allow them to seamlessly use virtucal machines and containers.
 
 ProxmoxManager is based on [proxmoxer](https://github.com/proxmoxer/proxmoxer) library and requires it as a dependency.
 
