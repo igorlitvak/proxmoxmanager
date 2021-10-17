@@ -116,7 +116,7 @@ Accessing specific VM:
 proxmox_manager.vms["100"]
 ```
 
-It can also be accesed by integer ID:
+It can also be accessed by integer ID:
 ```python
 proxmox_manager.vms[100]
 ```
