@@ -29,7 +29,7 @@ Usernames are unique string values in format `username@pam` or `username@pve`. B
 Users are NOT linked to specific nodes, and they can have access to any VMs/containers.
 
 ### Permissions
-Each user has a set of permissions, which consist of a path (e.g., `/vms/100`) and a permission name (e.g. `Administrator`). Each role itself contains a set of permissions.
+Each user has a set of permissions, which consist of a path (e.g., `/vms/100`) and a role name (e.g. `Administrator`). Each role itself contains a set of permissions.
 
 Proxmox allows to give root permissions (with path `/`) or permissions to all VMs/containers (with path like `/vms`), but this library for the sake of simplicity only allows to give permissions for specific user to specific VM/container.
 
