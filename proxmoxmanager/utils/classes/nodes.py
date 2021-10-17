@@ -1,6 +1,6 @@
 from ..api import APIWrapper
 from .errors import ProxmoxException
-from typing import Dict, Any
+from typing import Dict, Any, List, Tuple
 from random import choice
 
 
@@ -70,7 +70,18 @@ class ProxmoxNodeDict:
             raise ProxmoxException(f"No {'online ' if online_only else ''}nodes found")
         return choice(valid_choices)
 
-    def choose_by_most_free_ram(self, absolute: bool = True, online_only: bool = True):
+    def get_memory_info(self, nodes: List[ProxmoxNode]) -> List[Tuple[ProxmoxNode, float, float]]:
+        result = []
+
+        for node in nodes:
+            memory_info = node.get_status_report()["memory"]
+            rating_abs = float(memory_info["free"])
+            rating = rating_abs / float(memory_info["total"])
+            result.append((node, rating_abs, rating))
+
+        return result
+
+    def choose_by_most_free_ram(self, absolute: bool = True, online_only: bool = True) -> ProxmoxNode:
         """
         Choose from list of availible nodes with most free RAM
         :param absolute: Whether to rate free RAM in bytes or % (optional, default=True)
@@ -80,15 +91,15 @@ class ProxmoxNodeDict:
         valid_choices = [node for node in self.values() if node.online or not online_only]
         if not valid_choices:
             raise ProxmoxException(f"No {'online ' if online_only else ''}nodes found")
-        best_rating = 0.0
-        best_node = valid_choices[0]
-        for node in valid_choices[1:]:
-            memory_info = node.get_status_report()["memory"]
-            rating = float(memory_info["free"])
-            if not absolute:
-                rating /= float(memory_info["total"])
-            if rating > best_rating:
-                best_node = node
+
+        memory_info = self.get_memory_info(valid_choices)
+
+        rating_index = 1 if absolute else 2
+
+        nodes_sorted = sorted(memory_info, key=lambda result: result[rating_index], reverse=True)
+        best_node_info = nodes_sorted[0]
+        best_node = best_node_info[0]
+
         return best_node
 
     def __len__(self):
